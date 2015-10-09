@@ -1,0 +1,86 @@
+{
+    "language"        : "PYTHON",
+    "main-file"       : "spear_lintrans.py",
+    "experiment-name" : "ki1se1rlet_1",
+    "likelihood"      : "GAUSSIAN",
+    "variables" : {
+        "dict_i" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 5
+        },
+        "embed_i" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 8
+        },
+        "corp_i" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 1
+        },
+        "additional" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 100000
+        },
+        "train_size" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 50000
+        },
+        "dim" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 1200
+        },
+        "window" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 25
+        },
+        "min_count" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 500
+        },
+        "sg" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 1
+        },
+        "hs" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 1
+        },
+        "negative" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 15
+        },
+        "iter" : {
+            "type" : "INT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 25
+        },
+        "sample" : {
+            "type" : "FLOAT",
+            "size" : 1,
+            "min" : 0,
+            "max" : 1e-3
+        }
+    }
+}
