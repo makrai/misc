@@ -1,18 +1,18 @@
-#!/usr/bin/env python                                                                                                               
+#!/usr/bin/env python
 # disregarded: 'COLLOINEXA', 'GLOSS', 'UB', 'UR'
 
 import argparse
 import codecs
-import sys
+import re
 import xml.parsers.expat
 
 
 class OldLongmanParser:
-
+    # TODO REFHWD 
     def __init__(self, args):
         self.infilen = args.ldoce_xml
-        self.outfile = args.output_tsv
-        self.parser = xml.parsers.expat.ParserCreate( "utf-8" )
+        self.outfilen = args.output_tsv
+        self.parser = xml.parsers.expat.ParserCreate("utf-8")
         self.parser.StartElementHandler = self.start_element
         self.parser.EndElementHandler = self.end_element
         self.parser.CharacterDataHandler = self.character_data
@@ -23,8 +23,8 @@ class OldLongmanParser:
         self.include_nonDV = args.include_nonDV
 
     def main(self):
-        with open(self.infilen) as infile:
-            print infile.read()
+        with open(self.infilen) as infile, codecs.open(
+                self.outfilen, mode='w', encoding='utf-8') as self.outfile:
             self.parser.ParseFile(infile)
 
     def start_element(self, name, attrs):
@@ -35,7 +35,7 @@ class OldLongmanParser:
             self.hwd = ''
         elif name == 'DEF':
             if self.lexunit:
-                self.outfile.write(self.lexunit) 
+                self.outfile.write(self.lexunit)
             else:
                 self.outfile.write(self.hwd)
             self.outfile.write('\t')
@@ -60,15 +60,17 @@ class OldLongmanParser:
         if stripped != '':
             if name == 'HWD':
                 self.hwd += stripped
-            elif name == 'LEXUNIT': 
+            elif name == 'LEXUNIT':
                 self.lexunit += stripped
             elif  name == 'DEF' or (self.nonDV and self.include_nonDV):
-                self.outfile.write(re.sub(' *', ' ', data))
+                #self.outfile.write(data.strip())
+                self.outfile.write(re.sub(' +', ' ', data))
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Parse the Longman dictionary.')
     parser.add_argument('ldoce_xml')
-    parser.add_argument('output_tsv') 
+    parser.add_argument('output_tsv')
     parser.add_argument('--skip_nonDV', action='store_true', dest='include_nonDV')
     return parser.parse_args()
 
