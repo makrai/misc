@@ -34,37 +34,44 @@ class OldLongmanParser:
         elif name == 'HWD':
             self.hwd = ''
         elif name == 'DEF':
-            if self.lexunit:
-                self.outfile.write(self.lexunit)
-            else:
-                self.outfile.write(self.hwd)
+            self.defn = ''
+            #self.def_segms = [] # TODO def_segms
+            self.outfile.write(self.lexunit if self.lexunit else self.hwd)
             self.outfile.write('\t')
-        elif name == 'NonDV' and self.include_nonDV:
-            self.nonDV = True
-            self.outfile.write(' <NonDV>')
+        elif name == 'NonDV':
+            if self.include_nonDV:
+                self.nonDV = True
+                self.outfile.write('<NonDV>')
+                # TODO self.def_segms.append('<NonDV>')
 
     def end_element(self, name):
         self.path_in_xml_tree.pop()
         if name == 'DEF':
+            self.outfile.write(self.defn.strip()) 
+            #self.outfile.write(" ".join(self.def_segms).strip())
             self.outfile.write('\n')
         elif name == 'NonDV' and self.include_nonDV:
             self.nonDV = False
             self.outfile.write(' </NonDV>')
+                # TODO self.def_segms.append('</NonDV>')
 
     def character_data(self, data):
         if self.path_in_xml_tree[-1] == 'TEXT':
             name = self.path_in_xml_tree[-2]
         else:
             name = self.path_in_xml_tree[-1]
-        stripped = data.strip()
-        if stripped != '':
+        if data.strip():
             if name == 'HWD':
-                self.hwd += stripped
+                self.hwd += data.strip()
             elif name == 'LEXUNIT':
-                self.lexunit += stripped
-            elif  name == 'DEF' or (self.nonDV and self.include_nonDV):
-                #self.outfile.write(data.strip())
-                self.outfile.write(re.sub(' +', ' ', data))
+                self.lexunit += data.strip()
+            elif name == 'DEF' or (self.nonDV and self.include_nonDV):
+                self.defn += data
+                return 
+                if data.startswith(' ') or not self.def_segms:
+                    self.def_segms.append(data.strip())
+                else:
+                    self.def_segms[-1] += data.strip()
 
 
 def parse_args():
