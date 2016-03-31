@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# disregarded: 'COLLOINEXA', 'GLOSS', 'UB', 'UR'
 
 import argparse
 import codecs
@@ -8,7 +7,6 @@ import xml.parsers.expat
 
 
 class OldLongmanParser:
-    # TODO REFHWD 
     def __init__(self, args):
         self.infilen = args.ldoce_xml
         self.outfilen = args.output_tsv
