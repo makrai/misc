@@ -41,7 +41,7 @@ class OldLongmanParser:
         elif name in self.non_dv:
             if self.write_nonDV:
                 self.nonDV = True
-                self.defn += ' <NonDV>'
+                self.defn += ' <{}>'.format(name)
 
     def end_element(self, name):
         self.path_in_xml_tree.pop()
@@ -51,10 +51,10 @@ class OldLongmanParser:
         elif name in self.non_dv:
             if self.write_nonDV:
                 self.nonDV = False
-                self.defn += ' </NonDV>'
+                self.defn += ' </{}>'.format(name)
 
     def character_data(self, data):
-        if self.path_in_xml_tree[-1] == 'TEXT':
+        if self.path_in_xml_tree[-1] in ['TEXT', 'REFHWD']:
             name = self.path_in_xml_tree[-2]
         else:
             name = self.path_in_xml_tree[-1]
@@ -63,7 +63,8 @@ class OldLongmanParser:
                 self.hwd += data.strip()
             elif name == 'LEXUNIT':
                 self.lexunit += data.strip()
-            elif name == 'DEF' or (self.nonDV and self.write_nonDV):
+            elif (name in ['DEF', 'GLOSS'] or 
+                  (self.write_nonDV and name in self.non_dv)):
                 self.defn += data
 
 
