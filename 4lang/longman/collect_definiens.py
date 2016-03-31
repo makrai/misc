@@ -19,7 +19,8 @@ class OldLongmanParser:
         self.lexunit = ''
         self.nonDV = False
         self.write_nonDV = args.write_nonDV
-        self.non_dv = ['NonDV', 'FULLFORM']
+        self.non_dv_names = ['NonDV', 'FULLFORM']
+        self.hwd_names = ['HWD', 'PHRVBHWD']
 
     def main(self):
         with open(self.infilen) as infile, codecs.open(
@@ -30,13 +31,13 @@ class OldLongmanParser:
         self.path_in_xml_tree.append(name)
         if name == 'Sense':
             self.lexunit = ''
-        elif name == 'HWD':
+        elif name in self.hwd_names:
             self.hwd = ''
         elif name == 'DEF':
             self.defn = ''
             self.outfile.write(self.lexunit if self.lexunit else self.hwd)
             self.outfile.write('\t')
-        elif name in self.non_dv:
+        elif name in self.non_dv_names:
             if self.write_nonDV:
                 self.nonDV = True
                 self.defn += ' <{}>'.format(name)
@@ -46,7 +47,7 @@ class OldLongmanParser:
         if name == 'DEF':
             self.outfile.write(re.sub('\s\s+', ' ', self.defn.strip()))
             self.outfile.write('\n')
-        elif name in self.non_dv:
+        elif name in self.non_dv_names:
             if self.write_nonDV:
                 self.nonDV = False
                 self.defn += ' </{}>'.format(name)
@@ -57,12 +58,12 @@ class OldLongmanParser:
         else:
             name = self.path_in_xml_tree[-1]
         if data.strip():
-            if name == 'HWD':
+            if name in self.hwd_names:
                 self.hwd += data.strip()
             elif name == 'LEXUNIT':
                 self.lexunit += data.strip()
             elif (name in ['DEF', 'GLOSS'] or 
-                  (self.write_nonDV and name in self.non_dv)):
+                  (self.write_nonDV and name in self.non_dv_names)):
                 self.defn += data
 
 
