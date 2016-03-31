@@ -20,7 +20,8 @@ class OldLongmanParser:
         self.hwd = ''
         self.lexunit = ''
         self.nonDV = False
-        self.include_nonDV = args.include_nonDV
+        self.write_nonDV = args.write_nonDV
+        self.non_dv = ['NonDV', 'FULLFORM']
 
     def main(self):
         with open(self.infilen) as infile, codecs.open(
@@ -35,25 +36,22 @@ class OldLongmanParser:
             self.hwd = ''
         elif name == 'DEF':
             self.defn = ''
-            #self.def_segms = [] # TODO def_segms
             self.outfile.write(self.lexunit if self.lexunit else self.hwd)
             self.outfile.write('\t')
-        elif name == 'NonDV':
-            if self.include_nonDV:
+        elif name in self.non_dv:
+            if self.write_nonDV:
                 self.nonDV = True
-                self.outfile.write('<NonDV>')
-                # TODO self.def_segms.append('<NonDV>')
+                self.defn += ' <NonDV>'
 
     def end_element(self, name):
         self.path_in_xml_tree.pop()
         if name == 'DEF':
-            self.outfile.write(self.defn.strip()) 
-            #self.outfile.write(" ".join(self.def_segms).strip())
+            self.outfile.write(re.sub('\s\s+', ' ', self.defn.strip()))
             self.outfile.write('\n')
-        elif name == 'NonDV' and self.include_nonDV:
-            self.nonDV = False
-            self.outfile.write(' </NonDV>')
-                # TODO self.def_segms.append('</NonDV>')
+        elif name in self.non_dv:
+            if self.write_nonDV:
+                self.nonDV = False
+                self.defn += ' </NonDV>'
 
     def character_data(self, data):
         if self.path_in_xml_tree[-1] == 'TEXT':
@@ -65,20 +63,15 @@ class OldLongmanParser:
                 self.hwd += data.strip()
             elif name == 'LEXUNIT':
                 self.lexunit += data.strip()
-            elif name == 'DEF' or (self.nonDV and self.include_nonDV):
+            elif name == 'DEF' or (self.nonDV and self.write_nonDV):
                 self.defn += data
-                return 
-                if data.startswith(' ') or not self.def_segms:
-                    self.def_segms.append(data.strip())
-                else:
-                    self.def_segms[-1] += data.strip()
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Parse the Longman dictionary.')
     parser.add_argument('ldoce_xml')
     parser.add_argument('output_tsv')
-    parser.add_argument('--skip_nonDV', action='store_true', dest='include_nonDV')
+    parser.add_argument('--write_nonDV', action='store_true')
     return parser.parse_args()
 
 if __name__ == "__main__":
