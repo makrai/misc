@@ -15,12 +15,12 @@ def read_tade_mx():
         for line in tade_f:
             verb, frame, freq, _, _ = line.split()
             tade_d[verb, frame] = freq
-    verbs, frames = zip(*tade_d.iterkeys())
+    verbs, frames = zip(*tade_d.keys())
     frame_i = {frm: i for i, frm in enumerate(set(frames))}
     verb_i = {vrb: i for i, vrb in enumerate(set(verbs))}
     mx =  lil_matrix((len(verb_i), len(frame_i)))#, 'int')
     #mx = csc_matrix(mx)
-    for vrb, frm in  tade_d.iterkeys():
+    for vrb, frm in  tade_d.keys():
         mx[verb_i[vrb], frame_i[frm]] = int(tade_d[vrb, frm])
     return mx
 
