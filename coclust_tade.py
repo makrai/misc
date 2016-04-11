@@ -1,5 +1,7 @@
 from collections import defaultdict
 import logging
+import os
+import pickle
 
 from matplotlib import pyplot as plt 
 import numpy as np
@@ -9,6 +11,7 @@ from sklearn.cluster.bicluster import SpectralCoclustering
 
 
 def read_tade_mx():
+    #tade_pkl = ' if os.path.isfile TODO
     logging.info('Reading Tade matrix..')
     tade_d = dict()
     with open('/mnt/store/hlt/Language/Hungarian/Dic/tade.tsv') as tade_f:
@@ -31,20 +34,20 @@ def cocluster(mx):
     #n_clusters=3, svd_method='randomized',
     clusser.fit(mx)
     fit_data = mx
-    """
-    logging.info('Argsorting mx..')
+    logging.info('Argsorting mx rows..')
+    # type(clusser.row_labels_)): numpy.ndarray TODO
     fit_data = mx[np.argsort(clusser.row_labels_)]
+    logging.info('Argsorting mx columns..')
     fit_data = fit_data[:, np.argsort(clusser.column_labels_)]
-    """
     logging.info(type(fit_data))
     logging.info(fit_data.shape[:2])
-    plt.matshow(fit_data[:99,:99].todense())#.tocoo(), cmap=plt.cm.Blues)
+    plt.spy(fit_data)#.tocsr(), cmap=plt.cm.Blues)
     logging.info('')
     plt.show()
 
 
 if __name__ == '__main__':
     format_ = "%(asctime)s: %(module)s (%(lineno)s) %(levelname)s %(message)s"
-    logging.basicConfig(level=logging.INFO, format=format_)
+    logging.basicConfig(level=logging.DEBUG, format=format_)
     mx = read_tade_mx()
     cocluster(mx)
