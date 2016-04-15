@@ -22,8 +22,10 @@ class TadeClustering():
         with open('/mnt/store/hlt/Language/Hungarian/Dic/tade.tsv') as tade_f:
             for line in tade_f:
                 verb, column, freq, _, _ = line.split()
-                for cas in column.split('_'):
-                    tade_d[verb, cas] += int(freq)
+                freq = int(freq)
+                if freq > 1:
+                    for cas in column.split('_'):
+                        tade_d[verb, cas] += freq
         verbs, columns = zip(*tade_d.keys())
         column_i = {col: i for i, col in enumerate(set(columns))}
         verb_i = {vrb: i for i, vrb in enumerate(set(verbs))}
@@ -34,10 +36,10 @@ class TadeClustering():
             self.mx[verb_i[vrb], column_i[col]] = tade_d[vrb, col] 
 
     def dim_reduce(self):
-        logging.info('PCA...')
-        pca = PCA(n_components=100)
+        logging.info('PCA..')
+        pca = PCA(n_components=200)
         self.mx = pca.fit_transform(self.mx)
-        logging.info('t-SNE...')
+        logging.info('t-SNE..')
         tsne = TSNE(init='pca')
         self.mx = tsne.fit_transform(self.mx)
         # method : string (default: 'barnes_hut') 
