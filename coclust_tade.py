@@ -23,12 +23,12 @@ class TadeClustering():
             for line in tade_f:
                 verb, column, freq, _, _ = line.split()
                 freq = int(freq)
-                if freq > 1:
+                if freq > 1000:
                     for cas in column.split('_'):
                         tade_d[verb, cas] += freq
-        verbs, columns = zip(*tade_d.keys())
+        self.verbs, columns = zip(*tade_d.keys())
         column_i = {col: i for i, col in enumerate(set(columns))}
-        verb_i = {vrb: i for i, vrb in enumerate(set(verbs))}
+        verb_i = {vrb: i for i, vrb in enumerate(set(self.verbs))}
         #self.mx =  lil_matrix((len(verb_i), len(column_i)))#, 'int')
         self.mx =  np.zeros((len(verb_i), len(column_i)), 'int')
         logging.info(self.mx.shape)
@@ -36,12 +36,17 @@ class TadeClustering():
             self.mx[verb_i[vrb], column_i[col]] = tade_d[vrb, col] 
 
     def dim_reduce(self):
-        logging.info('PCA..')
-        pca = PCA(n_components=200)
-        self.mx = pca.fit_transform(self.mx)
+        if self.mx.shape[1] > 500:
+            logging.info('PCA..')
+            pca = PCA(n_components=200)
+            self.mx = pca.fit_transform(self.mx)
         logging.info('t-SNE..')
         tsne = TSNE(init='pca')
-        self.mx = tsne.fit_transform(self.mx)
+        try:
+            self.mx = tsne.fit_transform(self.mx)
+        except Exception as e:
+            logging.error(e)
+            raise e
         # method : string (default: 'barnes_hut') 
         #   By default the gradient calculation algorithm uses Barnes-Hut
         #   approximation running in O(NlogN) time. method='exact' will run on
@@ -63,7 +68,9 @@ class TadeClustering():
         fig = plt.figure()
         ax = fig.add_subplot(111)
         #ax.spy(mx, marker='.')
-        ax.plot(mx)
+        ax.scatter(*zip(*mx))
+        for label, row in zip(self.verbs, self.mx):
+            plt.annotate(label, xy = row)
         ax.set_aspect('auto')
         plt.show()
 
