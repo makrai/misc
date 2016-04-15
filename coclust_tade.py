@@ -3,15 +3,17 @@ import logging
 
 from matplotlib import pyplot as plt 
 import numpy as np
-from scipy.sparse import csc_matrix, lil_matrix
+from scipy.sparse import csc_matrix, lil_matrix, issparse
 from sklearn.cluster.bicluster import SpectralCoclustering, SpectralBiclustering
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 
 class TadeClustering():
     # TODO long vector, PCA to 200, t-SNE to 2
     def main(self):
         self.read_tade_mx()
-        self.cocluster()
+        self.dim_reduce()
         self.plot_clust(self.mx)
 
     def read_tade_mx(self):
@@ -25,11 +27,23 @@ class TadeClustering():
         verbs, columns = zip(*tade_d.keys())
         column_i = {col: i for i, col in enumerate(set(columns))}
         verb_i = {vrb: i for i, vrb in enumerate(set(verbs))}
-        self.mx =  lil_matrix((len(verb_i), len(column_i)))#, 'int')
-        #self.mx =  np.zeros((len(verb_i), len(column_i)), 'int')
+        #self.mx =  lil_matrix((len(verb_i), len(column_i)))#, 'int')
+        self.mx =  np.zeros((len(verb_i), len(column_i)), 'int')
         logging.info(self.mx.shape)
         for vrb, col in  tade_d.keys():
             self.mx[verb_i[vrb], column_i[col]] = tade_d[vrb, col] 
+
+    def dim_reduce(self):
+        logging.info('PCA...')
+        pca = PCA(n_components=100)
+        self.mx = pca.fit_transform(self.mx)
+        logging.info('t-SNE...')
+        tsne = TSNE(init='pca')
+        self.mx = tsne.fit_transform(self.mx)
+        # method : string (default: ‘barnes_hut’) 
+        #   By default the gradient calculation algorithm uses Barnes-Hut
+        #   approximation running in O(NlogN) time. method=’exact’ will run on
+        #   the slower, but exact, algorithm in O(N^2) time
 
     def cocluster(self):
         logging.info('Co-clustering Tade..')
@@ -46,7 +60,8 @@ class TadeClustering():
         logging.info('Plotting..')
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.spy(mx, marker='.')#.tocsr(), cmap=plt.cm.Blues)
+        #ax.spy(mx, marker='.')
+        ax.plot(mx)
         ax.set_aspect('auto')
         plt.show()
 
