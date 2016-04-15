@@ -40,9 +40,9 @@ class TadeClustering():
         logging.info('t-SNE...')
         tsne = TSNE(init='pca')
         self.mx = tsne.fit_transform(self.mx)
-        # method : string (default: ‘barnes_hut’) 
+        # method : string (default: 'barnes_hut') 
         #   By default the gradient calculation algorithm uses Barnes-Hut
-        #   approximation running in O(NlogN) time. method=’exact’ will run on
+        #   approximation running in O(NlogN) time. method='exact' will run on
         #   the slower, but exact, algorithm in O(N^2) time
 
     def cocluster(self):
