@@ -12,12 +12,14 @@ from matplotlib.colors import LogNorm
 
 class TadeClustering():
     # TODO long vector ?
-    def main(self):
-        self.transpose = False
+    def main(self, transpose=False):
+        self.transpose = transpose
         self.read_tade_mx()
         if self.transpose:
+            logging.info('Transposing')
             self.mx = self.mx.T
-        #self.dim_reduce()
+        #self.cocluster()
+        self.dim_reduce()
         self.plot_clust(self.mx)
 
     def read_tade_mx(self):
@@ -41,21 +43,17 @@ class TadeClustering():
         #self.mx = self.mx[(self.mx != 0).sum(axis=0) > 20]
         #verb_sum = self.mx.sum(axis=1)
         #case_sum = self.mx.sum(axis=0)
-        verb_argrank = (self.mx != 0).sum(axis=1).argsort()[::-1].reshape(-1,1) 
-        case_argrank = (self.mx != 0).sum(axis=0).argsort()[::-1].reshape(1,-1)
+        verb_argrank = (self.mx !=
+                        0).sum(axis=1).argsort()[::-1][:10000].reshape(-1,1)#
+        case_argrank = (self.mx !=
+                        0).sum(axis=0).argsort()[::-1][:20].reshape(1,-1)#
         self.verbs = np.array(self.verbs)[verb_argrank]
         self.cases = np.array(self.cases)[case_argrank]
-        logging.debug(type(self.mx))
-        for a in self.mx, verb_argrank, case_argrank:
-            logging.debug(a.shape)
-        if self.transpose:
-            self.mx = self.mx[case_argrank, verb_argrank]
-        else:
-            self.mx = self.mx[verb_argrank, case_argrank]
-        logging.debug(self.mx.shape) 
+        self.mx = self.mx[verb_argrank, case_argrank]
+        logging.debug(self.mx.shape)
 
-    def dim_reduce(self):
-        apply_tsne = False
+    def dim_reduce(self, apply_tsne=True):
+        apply_tsne = apply_tsne
         if self.mx.shape[1] > 500 or not apply_tsne:
             logging.info('PCA..')
             pca = PCA(n_components=200 if apply_tsne else 2)
@@ -69,37 +67,41 @@ class TadeClustering():
         #   approximation running in O(NlogN) time. method='exact' will run on
         #   the slower, but exact, algorithm in O(N^2) time
 
-    def cocluster(self):
+    def cocluster(self, blockdiag=True):
         logging.info('Co-clustering Tade..')
-        clusser = SpectralCoclustering(n_jobs=-1)
-        #clusser = SpectralBiclustering(n_jobs=-1)
-        #n_clusters=3, svd_method='randomized',
+        if blockdiag:
+            logging.info('blockdiag')
+            clusser = SpectralCoclustering(n_jobs=-1)
+        else: # checkerboard
+            logging.info('checkerboard')
+            clusser = SpectralBiclustering(n_jobs=-1)
+            #n_clusters=3, svd_method='randomized',
         clusser.fit(self.mx)
         logging.info('Argsorting mx rows..')
         self.mx = self.mx[np.argsort(clusser.row_labels_)]
         logging.info('Argsorting mx cases..')
         self.mx = self.mx[:, np.argsort(clusser.column_labels_)]
 
-    def plot_clust(self, mx):
+    def plot_clust(self, mx, savefig=False):
         logging.info('Plotting..')
         fig = plt.figure()
         ax = fig.add_subplot(111)
         if issparse(self.mx): 
-            pass
-            #ax.spy(self.mx[:200,:200], marker='.')
-            #ax.set_aspect('auto')
-        elif True:
-            cax = ax.matshow(self.mx[:10000,:20], norm=LogNorm())
+            ax.spy(self.mx[:200,:200], marker='.')
+            ax.set_aspect('auto')
+        elif self.mx.shape[1] > 2:
+            cax = ax.matshow(self.mx, norm=LogNorm())
             fig.colorbar(cax)
             ax.set_aspect('auto')
         else:
             ax.scatter(*zip(*mx))
-            for label, row in zip(self.verbs if self.transpose else self.cases, self.mx):
+            for label, row in zip(self.cases if self.transpose else self.verbs, self.mx):
                 ax.annotate(label, xy = row)
-        if False:
-            plt.show()
-        else:
+        if savefig:
+            logging.info('Saving fig..')
             plt.savefig('tade.pdf')
+        else:
+            plt.show()
 
 
 if __name__ == '__main__':
