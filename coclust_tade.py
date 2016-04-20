@@ -1,19 +1,23 @@
 from collections import defaultdict
 import logging
 
-from matplotlib import pyplot as plt 
 import numpy as np
 from scipy.sparse import csc_matrix, lil_matrix, issparse
-from sklearn.cluster.bicluster import SpectralCoclustering, SpectralBiclustering
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.cluster.bicluster import SpectralCoclustering, SpectralBiclustering
+from matplotlib import pyplot as plt 
+from matplotlib.colors import LogNorm
 
 
 class TadeClustering():
-    # TODO long vector, PCA to 200, t-SNE to 2
+    # TODO long vector ?
     def main(self):
+        self.transpose = False
         self.read_tade_mx()
-        self.dim_reduce()
+        if self.transpose:
+            self.mx = self.mx.T
+        #self.dim_reduce()
         self.plot_clust(self.mx)
 
     def read_tade_mx(self):
@@ -23,30 +27,43 @@ class TadeClustering():
             for line in tade_f:
                 verb, column, freq, _, _ = line.split()
                 freq = int(freq)
-                if freq > 1000:
+                if freq:
                     for cas in column.split('_'):
-                        tade_d[verb, cas] += freq
-        self.verbs, columns = zip(*tade_d.keys())
-        column_i = {col: i for i, col in enumerate(set(columns))}
+                        tade_d[verb, cas.upper()] += freq
+        self.verbs, self.cases = zip(*tade_d.keys())
+        case_i = {cas: i for i, cas in enumerate(set(self.cases))}
         verb_i = {vrb: i for i, vrb in enumerate(set(self.verbs))}
-        #self.mx =  lil_matrix((len(verb_i), len(column_i)))#, 'int')
-        self.mx =  np.zeros((len(verb_i), len(column_i)), 'int')
+        #self.mx =  lil_matrix((len(verb_i), len(case_i)))#, 'int')
+        self.mx =  np.zeros((len(verb_i), len(case_i)), 'int')
         logging.info(self.mx.shape)
         for vrb, col in  tade_d.keys():
-            self.mx[verb_i[vrb], column_i[col]] = tade_d[vrb, col] 
+            self.mx[verb_i[vrb], case_i[col]] = tade_d[vrb, col] 
+        #self.mx = self.mx[(self.mx != 0).sum(axis=0) > 20]
+        #verb_sum = self.mx.sum(axis=1)
+        #case_sum = self.mx.sum(axis=0)
+        verb_argrank = (self.mx != 0).sum(axis=1).argsort()[::-1].reshape(-1,1) 
+        case_argrank = (self.mx != 0).sum(axis=0).argsort()[::-1].reshape(1,-1)
+        self.verbs = np.array(self.verbs)[verb_argrank]
+        self.cases = np.array(self.cases)[case_argrank]
+        logging.debug(type(self.mx))
+        for a in self.mx, verb_argrank, case_argrank:
+            logging.debug(a.shape)
+        if self.transpose:
+            self.mx = self.mx[case_argrank, verb_argrank]
+        else:
+            self.mx = self.mx[verb_argrank, case_argrank]
+        logging.debug(self.mx.shape) 
 
     def dim_reduce(self):
-        if self.mx.shape[1] > 500:
+        apply_tsne = False
+        if self.mx.shape[1] > 500 or not apply_tsne:
             logging.info('PCA..')
-            pca = PCA(n_components=200)
+            pca = PCA(n_components=200 if apply_tsne else 2)
             self.mx = pca.fit_transform(self.mx)
         logging.info('t-SNE..')
-        tsne = TSNE(init='pca')
-        try:
+        if apply_tsne:
+            tsne = TSNE(init='pca')
             self.mx = tsne.fit_transform(self.mx)
-        except Exception as e:
-            logging.error(e)
-            raise e
         # method : string (default: 'barnes_hut') 
         #   By default the gradient calculation algorithm uses Barnes-Hut
         #   approximation running in O(NlogN) time. method='exact' will run on
@@ -60,19 +77,27 @@ class TadeClustering():
         clusser.fit(self.mx)
         logging.info('Argsorting mx rows..')
         self.mx = self.mx[np.argsort(clusser.row_labels_)]
-        logging.info('Argsorting mx columns..')
+        logging.info('Argsorting mx cases..')
         self.mx = self.mx[:, np.argsort(clusser.column_labels_)]
 
     def plot_clust(self, mx):
         logging.info('Plotting..')
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        #ax.spy(mx, marker='.')
-        ax.scatter(*zip(*mx))
-        for label, row in zip(self.verbs, self.mx):
-            plt.annotate(label, xy = row)
-        ax.set_aspect('auto')
-        plt.show()
+        if issparse(self.mx): 
+            pass
+            #ax.spy(self.mx[:200,:200], marker='.')
+            #ax.set_aspect('auto')
+        elif True:
+            cax = ax.matshow(self.mx, norm=LogNorm())
+            fig.colorbar(cax)
+            ax.set_aspect('auto')
+        else:
+            ax.scatter(*zip(*mx))
+            for label, row in zip(self.verbs if self.transpose else self.cases, self.mx):
+                ax.annotate(label, xy = row)
+        #plt.show()
+        plt.savefig('tade.pdf')
 
 
 if __name__ == '__main__':
