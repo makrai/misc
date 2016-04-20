@@ -89,15 +89,17 @@ class TadeClustering():
             #ax.spy(self.mx[:200,:200], marker='.')
             #ax.set_aspect('auto')
         elif True:
-            cax = ax.matshow(self.mx, norm=LogNorm())
+            cax = ax.matshow(self.mx[:10000,:20], norm=LogNorm())
             fig.colorbar(cax)
             ax.set_aspect('auto')
         else:
             ax.scatter(*zip(*mx))
             for label, row in zip(self.verbs if self.transpose else self.cases, self.mx):
                 ax.annotate(label, xy = row)
-        #plt.show()
-        plt.savefig('tade.pdf')
+        if False:
+            plt.show()
+        else:
+            plt.savefig('tade.pdf')
 
 
 if __name__ == '__main__':
