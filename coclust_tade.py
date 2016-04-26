@@ -14,56 +14,48 @@ from matplotlib.colors import LogNorm
 
 
 class TadeClustering(): 
-    def main(self, print_cutoff=False, transpose=False):
+    # TODO frame preplex cutoff before mut_info
+    def __init__(self):
+        self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade.tsv'
         self.mx_filen = 'tade_mx.npz'
-        tade_d = self.read_tade_dict()
-        if print_cutoff:
-            return self.read_tade_dict(print_cutoff=True)
-        self.get_tade_mx(tade_d)
-        if transpose:
-            logging.info('Transposing')
-            self.mx = self.mx.T
-        self.mut_info()
-        self.sort_lines()#cut_off=False)
-        #self.cocluster()
-        self.dim_reduce()#apply_tsne=False)
-        np.savez(self.mx_filen, self.mx, self.cases, self.verbs)
-        self.plot_tade(self.mx, transpose)#, savefig=True) 
 
-    def read_tade_dict(self, print_cutoff=False, short=True, load=True):
-        # befe1rko3zo3
+    def main(self, print_cutoff=False, transpose=False):
+        if print_cutoff:
+            self.read_frame_ent()
+            self.print_freq_frame()
+        else: 
+            self.read_tade_dict()
+            if transpose:
+                logging.info('Transposing')
+                self.mx = self.mx.T
+            self.mut_info()
+            self.sort_lines()#cut_off=False)
+            #self.cocluster()
+            #self.dim_reduce()#apply_tsne=False)
+            #np.savez(self.mx_filen, self.mx, self.cases, self.verbs)
+            self.plot_tade(self.mx, transpose)#, savefig=True) 
+
+    def read_tade_dict(self, collate_aux=True, short=False, load=False):
+        logging.info("Reading Tade to a dictionary..")
+        # TODO DEBUG load
         if load and isfile(self.mx_filen):
-                logging.info('Loading mx..')
-                self.mx, self.cases, self.verbs = np.load(self.mx_filen)
-                logging.debug(type(self.mx))
-                return
-        logging.info('Reading Tade matrix..')
-        tade_d = defaultdict(int)
-        self.frame_ent = dict()
-        frame_distri = []
-        with open('/home/hlt/Language/Hungarian/Dic/tade-cutoff.tsv') as tade_f:
-            verb2 = ''
+            logging.info('Loading mx..')
+            self.mx, self.cases, self.verbs = np.load(self.mx_filen)
+            logging.debug(type(self.mx))
+            return
+        with open(self.input_filen) as tade_f:
+            tade_d = defaultdict(int)
             for line in tade_f:
                 verb, frame, freq, vfreq, _ = line.split()
-                if print_cutoff and '_' in verb:
-                    continue
                 freq = int(freq)
-                if print_cutoff:
-                    if int(vfreq) < 2**(print_cutoff[verb] + 1) * freq:
-                        print(line.strip())
-                    if priverb != verb2:
-                        self.frame_ent[verb2] = entropy(frame_distri)
-                        #logging.debug((verb2, entropy(frame_distri)))
-                        frame_distri = []
-                        verb2 = verb
-                    frame_distri.append(freq)
+                if collate_aux: 
+                    verb = verb.split('_')[-1]
                 if short:
                     for cas in frame.split('_'):
                         tade_d[verb, cas] += freq
                 else:
                     tade_d[verb, frame] = freq 
-            self.frame_ent[verb2] = entropy(frame_distri)
-        return tade_d 
+        self.get_tade_mx(tade_d)
 
     def get_tade_mx(self, tade_d):
         self.verbs, self.cases = zip(*tade_d.keys())
@@ -77,13 +69,21 @@ class TadeClustering():
 
     def mut_info(self):
         logging.info('Computing mutual information..')
-        self.mx += 1
+        logging.debug('')
+        #self.mx += 1
+        logging.debug('')
         n_token =  self.mx.sum()
+        logging.debug('')
         verb_freq = self.mx.sum(axis=1).reshape(-1,1)
+        logging.debug('')
         case_freq = self.mx.sum(axis=0).reshape(1,-1)
+        logging.debug('Computing relative freq..')
         self.mx /= verb_freq
+        logging.debug('Computing relative freq..')
         self.mx /= case_freq
+        logging.debug('')
         self.mx *= n_token
+        logging.debug('')
         self.mx = np.log(self.mx)
 
     def sort_lines(self, cut_off=True):
@@ -113,7 +113,7 @@ class TadeClustering():
         logging.info('Argsorting mx cases..')
         self.mx = self.mx[:, np.argsort(clusser.column_labels_)]
 
-    def dim_reduce(self, apply_tsne=True):
+    def dim_reduce(self, apply_tsne=False):
         if self.mx.shape[1] > 400 or not apply_tsne:
             logging.info('PCA.. from {}'.format(self.mx.shape))
             pca = PCA(n_components=200 if apply_tsne else 2)
@@ -135,7 +135,7 @@ class TadeClustering():
             ax.spy(self.mx[:200,:200], marker='.')
             ax.set_aspect('auto')
         elif self.mx.shape[1] > 2:
-            cax = ax.matshow(self.mx)#, norm=LogNorm())
+            cax = ax.matshow(self.mx, norm=LogNorm())
             fig.colorbar(cax)
             ax.set_aspect('auto')
         else:
@@ -148,6 +148,31 @@ class TadeClustering():
             plt.savefig('tade-mutinfo-tsne.pdf')
         else:
             plt.show() 
+
+    def read_frame_ent(self):
+        self.frame_ent = dict()
+        with open(self.input_filen) as tade_f:
+            prev_verb = ''
+            frame_distri = []
+            for line in tade_f:
+                verb, frame, freq, vfreq, _ = line.split()
+                freq = int(freq)
+                if verb != prev_verb:
+                    self.frame_ent[prev_verb] = entropy(frame_distri)
+                    frame_distri = []
+                    prev_verb = verb
+                frame_distri.append(freq)
+            self.frame_ent[prev_verb] = entropy(frame_distri)
+
+    def print_freq_frame(self):
+        with open(self.input_filen) as tade_f:
+            for line in tade_f: 
+                verb, frame, freq, vfreq, _ = line.split()
+                freq = int(freq)
+                if '_' in verb: 
+                    continue
+                if int(vfreq) < 2**(self.frame_ent[verb] + 1) * freq: 
+                    print(line.strip())
 
 
 if __name__ == '__main__':
