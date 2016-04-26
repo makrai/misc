@@ -4,6 +4,7 @@ import logging
 from matplotlib import pyplot as plt 
 import numpy as np
 from scipy.sparse import csc_matrix, lil_matrix, issparse
+from scipy.stats import entropy
 from sklearn.cluster.bicluster import SpectralCoclustering, SpectralBiclustering
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -11,21 +12,45 @@ from sklearn.manifold import TSNE
 
 class TadeClustering():
     # TODO long vector, PCA to 200, t-SNE to 2
-    def main(self):
-        self.read_tade_mx()
+    # befe1rko3zo3
+    def main(self, print_cutoff=False):
+        tade_d = self.read_tade_dict()
+        if print_cutoff:
+            return self.read_tade_dict(print_cutoff=True)
+        self.get_tade_mx(tade_d)
         self.dim_reduce()
         self.plot_clust(self.mx)
 
-    def read_tade_mx(self):
+    def read_tade_dict(self, print_cutoff=False, short=True):
         logging.info('Reading Tade matrix..')
         tade_d = defaultdict(int)
-        with open('/mnt/store/hlt/Language/Hungarian/Dic/tade.tsv') as tade_f:
+        self.frame_ent = dict()
+        frame_distri = []
+        with open('/home/hlt/Language/Hungarian/Dic/tade-cutoff.tsv') as tade_f:
+            verb2 = ''
             for line in tade_f:
-                verb, column, freq, _, _ = line.split()
+                verb, frame, freq, vfreq, _ = line.split()
+                if print_cutoff and '_' in verb:
+                    continue
                 freq = int(freq)
-                if freq > 1000:
-                    for cas in column.split('_'):
+                if print_cutoff:
+                    if int(vfreq) < 2**(print_cutoff[verb] + 1) * freq:
+                        print(line.strip())
+                    if priverb != verb2:
+                        self.frame_ent[verb2] = entropy(frame_distri)
+                        #logging.debug((verb2, entropy(frame_distri)))
+                        frame_distri = []
+                        verb2 = verb
+                    frame_distri.append(freq)
+                if short:
+                    for cas in frame.split('_'):
                         tade_d[verb, cas] += freq
+                else:
+                    tade_d[verb, frame] += freq 
+            self.frame_ent[verb2] = entropy(frame_distri)
+        return tade_d 
+
+    def get_tade_mx(self, tade_d):
         self.verbs, columns = zip(*tade_d.keys())
         column_i = {col: i for i, col in enumerate(set(columns))}
         verb_i = {vrb: i for i, vrb in enumerate(set(self.verbs))}
