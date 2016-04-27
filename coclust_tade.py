@@ -14,9 +14,10 @@ from matplotlib.colors import LogNorm
 
 
 class TadeClustering(): 
-    # TODO frame preplex cutoff before mut_info
+    # a sort-beli cutoffna1l bejo2n csupa nulla sor
+    # TODO  mut_info?
     def __init__(self):
-        self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade.tsv'
+        self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade_cutoff_with-aux.tsv'
         self.mx_filen = 'tade_mx.npz'
 
     def main(self, print_cutoff=False, transpose=False):
@@ -28,9 +29,9 @@ class TadeClustering():
             if transpose:
                 logging.info('Transposing')
                 self.mx = self.mx.T
-            self.mut_info()
+            #self.mut_info()
             self.sort_lines()#cut_off=False)
-            #self.cocluster()
+            self.cocluster()
             #self.dim_reduce()#apply_tsne=False)
             #np.savez(self.mx_filen, self.mx, self.cases, self.verbs)
             self.plot_tade(self.mx, transpose)#, savefig=True) 
@@ -54,7 +55,7 @@ class TadeClustering():
                     for cas in frame.split('_'):
                         tade_d[verb, cas] += freq
                 else:
-                    tade_d[verb, frame] = freq 
+                    tade_d[verb, frame] += freq 
         self.get_tade_mx(tade_d)
 
     def get_tade_mx(self, tade_d):
@@ -65,7 +66,7 @@ class TadeClustering():
         self.mx =  np.zeros((len(verb_i), len(case_i)))
         logging.info(self.mx.shape)
         for vrb, col in  tade_d.keys():
-            self.mx[verb_i[vrb], case_i[col]] += tade_d[vrb, col] 
+            self.mx[verb_i[vrb], case_i[col]] = tade_d[vrb, col] 
 
     def mut_info(self):
         logging.info('Computing mutual information..')
@@ -98,7 +99,7 @@ class TadeClustering():
         self.cases = np.array(self.cases)[case_argrank]
         self.mx = self.mx[verb_argrank, case_argrank]
 
-    def cocluster(self, blockdiag=True):
+    def cocluster(self, blockdiag=False):
         logging.info('Co-clustering Tade..')
         if blockdiag:
             logging.info('blockdiag')
@@ -164,12 +165,12 @@ class TadeClustering():
                 frame_distri.append(freq)
             self.frame_ent[prev_verb] = entropy(frame_distri)
 
-    def print_freq_frame(self):
+    def print_freq_frame(self, drop_aux=True):
         with open(self.input_filen) as tade_f:
             for line in tade_f: 
                 verb, frame, freq, vfreq, _ = line.split()
                 freq = int(freq)
-                if '_' in verb: 
+                if drop_aux and '_' in verb: 
                     continue
                 if int(vfreq) < 2**(self.frame_ent[verb] + 1) * freq: 
                     print(line.strip())
