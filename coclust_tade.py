@@ -15,12 +15,14 @@ from matplotlib import ticker
 
 
 class TadeClustering(): 
-    def __init__(self, short=False, transpose=False, load=False): 
+    def __init__(self, short=True, transpose=False, load=False,
+                 type_freq=False): 
         self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade/tade_cutoff_with-aux.tsv'
         self.mx_filen = 'tade_mx.npz'
         self.short = short
         self.transpose=transpose
         self.load=load
+        self.type_freq=type_freq
 
     def main(self, print_cutoff=False, log_mx=False):
         # TODO mut_info and cocluster are incompatible
@@ -33,13 +35,13 @@ class TadeClustering():
             if self.transpose:
                 logging.info('Transposing')
                 self.mx = self.mx.T
-            self.sort_lines(cut_off=(400,1000))
+            self.sort_lines(cut_off=(20,20))#100))#400,1000))
             self.mut_info(log_mx)
-            #self.cocluster()
-            self.dim_reduce()#apply_tsne=False)
+            #self.cocluster()#blockdiag=True)
+            #self.dim_reduce()#apply_tsne=False)
             if self.load:
                 np.savez(self.mx_filen, self.mx, self.cols, self.rows)
-            self.plot_tade(log_mx)
+            self.plot_tade(log_mx, fig_filen='tade-prev-cas-token.pdf')
 
     def read_tade_dict(self, collate_aux=True, row_is_prev=False):
         logging.info("Reading Tade to a dictionary..")
@@ -67,8 +69,8 @@ class TadeClustering():
                     self.book_clause(verb, frame, freq)
         self.dict_to_mx()
 
-    def book_clause(self, verb, frame, freq, type_freq=False):
-        if type_freq:
+    def book_clause(self, verb, frame, freq):
+        if self.type_freq:
             freq = 1
         if self.short:
             for cas in frame.split('_'):
@@ -93,7 +95,7 @@ class TadeClustering():
 
     def mut_info(self, log_mx):
         logging.info('Computing mutual information..')
-        self.mx += 1
+        #self.mx += 1
         n_token =  self.mx.sum()
         verb_freq = self.mx.sum(axis=1).reshape(-1,1)
         cas_freq = self.mx.sum(axis=0).reshape(1,-1)
@@ -125,7 +127,7 @@ class TadeClustering():
             clusser = SpectralCoclustering(n_jobs=-1)
         else: # checkerboard
             logging.info('checkerboard')
-            clusser = SpectralBiclustering(n_jobs=-1)
+            clusser = SpectralBiclustering(n_jobs=-1, n_clusters=4)
             #n_clusters=3, svd_method='randomized',
         clusser.fit(self.mx)
         logging.info('Argsorting mx rows..')
@@ -150,7 +152,7 @@ class TadeClustering():
         #   the slower, but exact, algorithm in O(N^2) time
         logging.debug(self.mx.shape)
 
-    def plot_tade(self, log_mx, savefig=False, row_freq_ent=False, mut_info=False):
+    def plot_tade(self, log_mx, fig_filen=None, row_freq_ent=False, mut_info=False):
         logging.info('Plotting..')
         fig = plt.figure()
         self.ax = fig.add_subplot(111)
@@ -169,12 +171,14 @@ class TadeClustering():
                 cax = self.ax.matshow(self.mx)
             else:
                 cax = self.ax.matshow(self.mx, norm=LogNorm())
-            label_limit = 150
-            if self.mx.shape[0] < label_limit:
+            label_limit = 100
+            if self.mx.shape[0] <= label_limit:
                 self.ax.set_yticklabels([''] + self.rows.tolist())
                 self.ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
-            if self.mx.shape[1] < label_limit:
-                self.ax.set_xticklabels([''] + self.cols.tolist())
+            if self.mx.shape[1] <= label_limit:
+                cas_proper = lambda col: col.split('<')[-1] if '<' in col else col
+                self.ax.set_xticklabels([''] + list(map(cas_proper,
+                                                        self.cols)))
                 self.ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
                 locs, labels = plt.xticks()
                 plt.setp(labels, rotation=90)
@@ -182,9 +186,9 @@ class TadeClustering():
             self.ax.set_aspect('auto')
         else:
             self.scatter(self.mx[:,0], self.mx[:,1])
-        if savefig:
+        if fig_filen:
             logging.info('Saving fig..')
-            plt.savefig('tade-mutinfo-tsne.pdf')
+            plt.savefig(fig_filen)
         else:
             plt.show() 
 
