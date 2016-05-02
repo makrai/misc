@@ -16,7 +16,7 @@ from matplotlib import ticker
 
 class TadeClustering(): 
     def __init__(self, short=True, transpose=False, load=False,
-                 type_freq=False): 
+                 type_freq=True): 
         self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade/tade_cutoff_with-aux.tsv'
         self.mx_filen = 'tade_mx.npz'
         self.short = short
@@ -35,13 +35,13 @@ class TadeClustering():
             if self.transpose:
                 logging.info('Transposing')
                 self.mx = self.mx.T
-            self.sort_lines(cut_off=(20,20))#100))#400,1000))
+            self.sort_lines(cut_off=(50,100))#400,1000))
             self.mut_info(log_mx)
             #self.cocluster()#blockdiag=True)
-            #self.dim_reduce()#apply_tsne=False)
+            self.dim_reduce()#apply_tsne=False)
             if self.load:
                 np.savez(self.mx_filen, self.mx, self.cols, self.rows)
-            self.plot_tade(log_mx, fig_filen='tade-prev-cas-token.pdf')
+            self.plot_tade(log_mx)#, fig_filen='tade-prev-cas-token.pdf')
 
     def read_tade_dict(self, collate_aux=True, row_is_prev=False):
         logging.info("Reading Tade to a dictionary..")
@@ -95,7 +95,7 @@ class TadeClustering():
 
     def mut_info(self, log_mx):
         logging.info('Computing mutual information..')
-        #self.mx += 1
+        self.mx += 1
         n_token =  self.mx.sum()
         verb_freq = self.mx.sum(axis=1).reshape(-1,1)
         cas_freq = self.mx.sum(axis=0).reshape(1,-1)
@@ -163,7 +163,7 @@ class TadeClustering():
             row_freq = self.mx.sum(axis=1).reshape(-1,1)
             row_ent = np.apply_along_axis(entropy, 1, self.mx)
             self.scatter(row_freq, row_ent)
-        elif self.mx.shape[1] > 2:
+        elif self.mx.shape[1] > 2: # matshow
             points, features = self.rows, self.cols
             if self.transpose:
                 points, features = features, points
@@ -200,7 +200,6 @@ class TadeClustering():
         labels = np.array(['{} {}'.format(l, features[m]) for l, m in zip(
             points, self.mx.argmax(axis=1))])
         for label, row in zip(labels.reshape(-1), zip(xs, ys)):
-            break
             self.ax.annotate(label, xy=row, fontsize=10)
         #self.ax.set_xscale('log')
 
