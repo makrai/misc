@@ -29,12 +29,12 @@ class TadeClustering():
             self.read_frame_ent()
             self.print_freq_frame()
         else: 
-            self.read_tade_dict()
+            self.read_tade_dict(row_is_prev=True)
             if self.transpose:
                 logging.info('Transposing')
                 self.mx = self.mx.T
-            self.sort_lines()#cut_off=False)
-            #self.mut_info(log_mx)
+            self.sort_lines(cut_off=(400,1000))
+            self.mut_info(log_mx)
             #self.cocluster()
             self.dim_reduce()#apply_tsne=False)
             if self.load:
@@ -79,7 +79,7 @@ class TadeClustering():
     def dict_to_mx(self, sparse=False):
         self.rows, self.cols = [np.array(list(set(tuple_)))
                                 for tuple_ in zip(*self.tade_dict.keys())]
-        logging.debug(self.rows)
+        logging.debug(self.rows[:7])
         logging.debug(self.cols[:1])
         case_i = {cas: i for i, cas in enumerate(self.cols)}
         verb_i = {vrb: i for i, vrb in enumerate(self.rows)}
@@ -93,7 +93,7 @@ class TadeClustering():
 
     def mut_info(self, log_mx):
         logging.info('Computing mutual information..')
-        #self.mx += 1
+        self.mx += 1
         n_token =  self.mx.sum()
         verb_freq = self.mx.sum(axis=1).reshape(-1,1)
         cas_freq = self.mx.sum(axis=0).reshape(1,-1)
@@ -105,15 +105,11 @@ class TadeClustering():
         if log_mx:
             self.mx = np.log(self.mx)
 
-    def sort_lines(self, cut_off=True):
+    def sort_lines(self, cut_off=(-1,-1)):
         verb_argrank = self.mx.sum(axis=1).argsort()[::-1]
         cas_argrank = self.mx.sum(axis=0).argsort()[::-1]
-        if cut_off: 
-            if self.short: 
-                verb_argrank = verb_argrank[:1000]
-                cas_argrank = cas_argrank[:20]
-            else:
-                verb_argrank = verb_argrank[:2000]
+        verb_argrank = verb_argrank[:cut_off[0]]
+        cas_argrank = cas_argrank[:cut_off[1]]
         verb_argrank = verb_argrank.reshape(-1,1)
         cas_argrank = cas_argrank.reshape(1,-1) 
         self.mx = self.mx[verb_argrank, cas_argrank]
@@ -207,17 +203,17 @@ class TadeClustering():
     def read_frame_ent(self):
         self.frame_ent = dict()
         with open(self.input_filen) as tade_f:
-            prev_verb = ''
+            last_verb = ''
             frame_distri = []
             for line in tade_f:
                 verb, frame, freq, vfreq, _ = line.split()
                 freq = int(freq)
-                if verb != prev_verb:
-                    self.frame_ent[prev_verb] = entropy(frame_distri)
+                if verb != last_verb:
+                    self.frame_ent[last_verb] = entropy(frame_distri)
                     frame_distri = []
-                    prev_verb = verb
+                    last_verb = verb
                 frame_distri.append(freq)
-            self.frame_ent[prev_verb] = entropy(frame_distri)
+            self.frame_ent[last_verb] = entropy(frame_distri)
 
     def print_freq_frame(self, drop_aux=True):
         with open(self.input_filen) as tade_f:
