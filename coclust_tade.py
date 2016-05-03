@@ -127,7 +127,7 @@ class TadeClustering():
             clusser = SpectralCoclustering(n_jobs=-1)
         else: # checkerboard
             logging.info('checkerboard')
-            clusser = SpectralBiclustering(n_jobs=-1, n_clusters=4)
+            clusser = SpectralBiclustering(n_jobs=-1, n_clusters=(4,3))
             #n_clusters=3, svd_method='randomized',
         clusser.fit(self.mx)
         logging.info('Argsorting mx rows..')
