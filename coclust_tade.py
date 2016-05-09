@@ -15,110 +15,113 @@ from matplotlib import ticker
 
 
 class TadeClustering(): 
-    def __init__(self, short=True, transpose=False, load=False,
-                 type_freq=True): 
+    def __init__(self, short=True, log_mx=False, sum_axis=1):
         self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade/tade_cutoff_with-aux.tsv'
-        self.mx_filen = 'tade_mx.npz'
         self.short = short
-        self.transpose=transpose
-        self.load=load
-        self.type_freq=type_freq
+        self.log_mx = log_mx
+        self.sum_axis = sum_axis
 
-    def main(self, print_cutoff=False, log_mx=False):
-        # TODO mut_info and cocluster are incompatible
-        # TODO ACC-ot ku2lo2n kezelni?
+    def main(self, print_cutoff=False):
         if print_cutoff:
             self.read_frame_ent()
             self.print_freq_frame()
         else: 
-            self.read_tade_dict(row_is_prev=True)
-            if self.transpose:
-                logging.info('Transposing')
-                self.mx = self.mx.T
-            self.sort_lines(cut_off=(50,100))#400,1000))
-            self.mut_info(log_mx)
+            tade_dict = self.read_tade_dict(type_freq=True)
+            freq_mx = self.dict_to_mx(tade_dict).sum(axis=self.sum_axis) 
+            freq_mx = self.sort_lines(freq_mx, cut_off=(50,100))#400,1000))
+            mi_mx = self.mut_info(freq_mx)
+            #self.cond_depend()
             #self.cocluster()#blockdiag=True)
-            self.dim_reduce()#apply_tsne=False)
-            if self.load:
-                np.savez(self.mx_filen, self.mx, self.cols, self.rows)
-            self.plot_tade(log_mx)#, fig_filen='tade-prev-cas-token.pdf')
+            #self.dim_reduce()#apply_tsne=False)
+            self.plot_tade(freq_mx, mi_mx)#, fig_filen='tade-prev-cas-token.pdf')
 
-    def read_tade_dict(self, collate_aux=True, row_is_prev=False):
+    def read_tade_dict(self, type_freq=True, collate_aux=True):
         logging.info("Reading Tade to a dictionary..")
-        # TODO DEBUG load
-        if self.load and isfile(self.mx_filen):
-            logging.info('Loading mx..')
-            self.mx, self.cols, self.rows = np.load(self.mx_filen)
-            logging.debug(type(self.mx))
-            return
         with open(self.input_filen) as tade_f:
-            self.tade_dict = defaultdict(int)
+            tade_dict = defaultdict(int)
             for line in tade_f:
                 verb, frame, freq, vfreq, _ = line.split()
-                frame = frame.upper()
-                freq = int(freq)
+                frame = frame.upper() 
+                freq = 1 if type_freq else int(freq)
                 if collate_aux: 
                     verb = verb.split('_')[-1]
-                if row_is_prev:
-                    if '+' in verb: 
-                        prev, verb = verb.split('+', 1)
-                        if '+' in verb:
-                            continue 
-                        self.book_clause(prev, frame, freq)
+                if '+' in verb: 
+                    prev, stem = verb.split('+', 1)
+                    if '+' in stem:
+                        continue 
                 else:
-                    self.book_clause(verb, frame, freq)
-        self.dict_to_mx()
+                    prev, stem = '@', verb
+                if self.short: 
+                    for cas in frame.split('_'):
+                        tade_dict[prev, stem, cas] += freq
+                else:
+                    tade_dict[prev, stem, frame] += freq 
+        return tade_dict
 
-    def book_clause(self, verb, frame, freq):
-        if self.type_freq:
-            freq = 1
-        if self.short:
-            for cas in frame.split('_'):
-                self.tade_dict[verb, cas] += freq
-        else:
-            self.tade_dict[verb, frame] += freq 
+    def dict_to_mx(self, tade_dict, sparse=False):
+        self.prev, self.stems, self.case = [
+            np.array(list(set(tuple_)))
+            for tuple_ in zip(*tade_dict.keys())]
+        logging.debug(self.prev[:7])
+        logging.debug(self.stems[:7])
+        logging.debug(self.case[:7])
+        prev_i = {key: i for i, key in enumerate(self.prev)}
+        stem_i = {key: i for i, key in enumerate(self.stems)}
+        col_i = {key: i for i, key in enumerate(self.case)}
+        shape = (len(prev_i), len(stem_i), len(col_i))
+        logging.info(shape)
+        mx =  lil_matrix(shape) if sparse else np.zeros(shape)
+        for prev, stem, col in  tade_dict:
+            mx[prev_i[prev], stem_i[stem], col_i[col]] = tade_dict[
+                                                              prev, stem, col]
+        return mx
 
-    def dict_to_mx(self, sparse=False):
-        self.rows, self.cols = [np.array(list(set(tuple_)))
-                                for tuple_ in zip(*self.tade_dict.keys())]
-        logging.debug(self.rows[:7])
-        logging.debug(self.cols[:1])
-        case_i = {cas: i for i, cas in enumerate(self.cols)}
-        verb_i = {vrb: i for i, vrb in enumerate(self.rows)}
-        if sparse:
-            self.mx =  lil_matrix((len(verb_i), len(case_i)))#, 'int')
-        else:
-            self.mx =  np.zeros((len(verb_i), len(case_i)))
-        logging.info(self.mx.shape)
-        for vrb, col in  self.tade_dict.keys():
-            self.mx[verb_i[vrb], case_i[col]] = self.tade_dict[vrb, col] 
+    def cond_depend(self, probab_axis=2):
+        logging.info("Computing conditional dependency..")
+        shape = list(mx.shape)
+        shape[probab_axis] = -1
+        shape = tuple(shape)
+        mx += 1
+        mx /= mx.sum(axis=probab_axis).reshape(shape)
+        mx = mx.sum(axis=self.sum_axis) 
 
-    def mut_info(self, log_mx):
+    def mut_info(self, mx):
         logging.info('Computing mutual information..')
-        self.mx += 1
-        n_token =  self.mx.sum()
-        verb_freq = self.mx.sum(axis=1).reshape(-1,1)
-        cas_freq = self.mx.sum(axis=0).reshape(1,-1)
+        mx += 1
+        n_token =  mx.sum()
+        row_sum = mx.sum(axis=1).reshape(-1,1)
+        col_sum = mx.sum(axis=0).reshape(1,-1)
         logging.debug('Computing relative freq..')
-        self.mx /= verb_freq
+        mx /= row_sum
         logging.debug('Computing relative freq..')
-        self.mx /= cas_freq
-        self.mx *= n_token
-        if log_mx:
-            self.mx = np.log(self.mx)
+        mx /= col_sum
+        mx *= n_token
+        if self.log_mx:
+            mx = np.log(mx)
+        return mx
 
-    def sort_lines(self, cut_off=(-1,-1)):
-        verb_argrank = self.mx.sum(axis=1).argsort()[::-1]
-        cas_argrank = self.mx.sum(axis=0).argsort()[::-1]
-        verb_argrank = verb_argrank[:cut_off[0]]
-        cas_argrank = cas_argrank[:cut_off[1]]
-        verb_argrank = verb_argrank.reshape(-1,1)
-        cas_argrank = cas_argrank.reshape(1,-1) 
-        self.mx = self.mx[verb_argrank, cas_argrank]
-        self.rows = self.rows[verb_argrank].reshape(-1)
-        self.cols = self.cols[cas_argrank].reshape(-1)
+    def sort_lines(self, mx, cut_off=(-1,-1)):
+        logging.info("Sorting array..")
+        row_argrank = mx.sum(axis=1).argsort()[::-1]
+        col_argrank = mx.sum(axis=0).argsort()[::-1]
+        row_argrank = row_argrank[:cut_off[0]]
+        col_argrank = col_argrank[:cut_off[1]]
+        row_argrank = row_argrank.reshape(-1,1)
+        col_argrank = col_argrank.reshape(1,-1) 
+        mx = mx[row_argrank, col_argrank]
+        if self.sum_axis == 0:
+            self.rows = self.stems[row_argrank].reshape(-1)
+            self.cols = self.case[col_argrank].reshape(-1)
+        if self.sum_axis == 1:
+            self.rows = self.prev[row_argrank].reshape(-1)
+            self.cols = self.case[col_argrank].reshape(-1)
+        if self.sum_axis == 2:
+            self.rows = self.prev[row_argrank].reshape(-1)
+            self.cols = self.stems[col_argrank].reshape(-1)
         logging.debug(self.rows[:5])
-        logging.debug(self.cols[:4])
+        logging.debug(self.cols[:5])
+        return mx
+
 
     def cocluster(self, blockdiag=False):
         logging.info('Co-clustering Tade..')
@@ -129,53 +132,50 @@ class TadeClustering():
             logging.info('checkerboard')
             clusser = SpectralBiclustering(n_jobs=-1, n_clusters=(4,3))
             #n_clusters=3, svd_method='randomized',
-        clusser.fit(self.mx)
+        clusser.fit(mx)
         logging.info('Argsorting mx rows..')
-        self.mx = self.mx[np.argsort(clusser.row_labels_)]
-        self.rows = self.rows[np.argsort(clusser.row_labels_)]
+        mx = mx[np.argsort(clusser.row_labels_)]
+        self.prev = self.prev[np.argsort(clusser.row_labels_)]
         logging.info('Argsorting mx cases..')
-        self.mx = self.mx[:, np.argsort(clusser.column_labels_)]
-        self.cols = self.cols[np.argsort(clusser.column_labels_)]
+        mx = mx[:, np.argsort(clusser.column_labels_)]
+        self.case = self.case[np.argsort(clusser.column_labels_)]
 
     def dim_reduce(self, apply_tsne=True):
-        if self.mx.shape[1] > 400 or not apply_tsne:
-            logging.info('PCA.. from {}'.format(self.mx.shape))
+        if mx.shape[1] > 400 or not apply_tsne:
+            logging.info('PCA.. from {}'.format(mx.shape))
             pca = PCA(n_components=200 if apply_tsne else 2)
-            self.mx = pca.fit_transform(self.mx)
+            mx = pca.fit_transform(mx)
         if apply_tsne:
-            logging.info('t-SNE.. from {}'.format(self.mx.shape))
+            logging.info('t-SNE.. from {}'.format(mx.shape))
             tsne = TSNE(init='pca')
-            self.mx = tsne.fit_transform(self.mx)
+            mx = tsne.fit_transform(mx)
         # method : string (default: 'barnes_hut') 
         #   By default the gradient calculation algorithm uses Barnes-Hut
         #   approximation running in O(NlogN) time. method='exact' will run on
         #   the slower, but exact, algorithm in O(N^2) time
-        logging.debug(self.mx.shape)
+        logging.debug(mx.shape)
 
-    def plot_tade(self, log_mx, fig_filen=None, row_freq_ent=False, mut_info=False):
+    def plot_tade(self, freq_mx, mi_mx, fig_filen=None, row_freq_ent=False):
         logging.info('Plotting..')
         fig = plt.figure()
         self.ax = fig.add_subplot(111)
-        if issparse(self.mx): 
-            self.ax.spy(self.mx[:200,:200], marker='.')
+        if issparse(mi_mx): 
+            self.ax.spy(mi_mx[:200,:200], marker='.')
             self.ax.set_aspect('auto')
         elif row_freq_ent:
-            row_freq = self.mx.sum(axis=1).reshape(-1,1)
-            row_ent = np.apply_along_axis(entropy, 1, self.mx)
+            row_freq = mi_mx.sum(axis=1).reshape(-1,1)
+            row_ent = np.apply_along_axis(entropy, 1, mi_mx)
             self.scatter(row_freq, row_ent)
-        elif self.mx.shape[1] > 2: # matshow
-            points, features = self.rows, self.cols
-            if self.transpose:
-                points, features = features, points
-            if log_mx:
-                cax = self.ax.matshow(self.mx)
+        elif mi_mx.shape[1] > 2: # matshow
+            if self.log_mx:
+                cax = self.ax.matshow(mi_mx)
             else:
-                cax = self.ax.matshow(self.mx, norm=LogNorm())
+                cax = self.ax.matshow(freq_mx>2)#np.where(freq_mx>3, mi_mx, np.zeros(mi_mx.shape)))# norm=LogNorm())
             label_limit = 100
-            if self.mx.shape[0] <= label_limit:
+            if mi_mx.shape[0] <= label_limit:
                 self.ax.set_yticklabels([''] + self.rows.tolist())
                 self.ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
-            if self.mx.shape[1] <= label_limit:
+            if mi_mx.shape[1] <= label_limit:
                 cas_proper = lambda col: col.split('<')[-1] if '<' in col else col
                 self.ax.set_xticklabels([''] + list(map(cas_proper,
                                                         self.cols)))
@@ -185,7 +185,7 @@ class TadeClustering():
             fig.colorbar(cax)
             self.ax.set_aspect('auto')
         else:
-            self.scatter(self.mx[:,0], self.mx[:,1])
+            self.scatter(mi_mx[:,0], mi_mx[:,1])
         if fig_filen:
             logging.info('Saving fig..')
             plt.savefig(fig_filen)
@@ -194,11 +194,9 @@ class TadeClustering():
 
     def scatter(self, xs, ys):
         self.ax.scatter(xs, ys)
-        points, features = self.rows, self.cols
-        if self.transpose:
-            points, features = features, points
+        points, features = self.prev, self.case
         labels = np.array(['{} {}'.format(l, features[m]) for l, m in zip(
-            points, self.mx.argmax(axis=1))])
+            points, mx.argmax(axis=1))])
         for label, row in zip(labels.reshape(-1), zip(xs, ys)):
             self.ax.annotate(label, xy=row, fontsize=10)
         #self.ax.set_xscale('log')
