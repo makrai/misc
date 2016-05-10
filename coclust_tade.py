@@ -29,7 +29,7 @@ class TadeClustering():
             tade_dict = self.read_tade_dict(type_freq=True)
             freq_mx = self.dict_to_mx(tade_dict).sum(axis=self.sum_axis) 
             freq_mx = self.sort_lines(freq_mx, cut_off=(50,100))#400,1000))
-            mi_mx = self.mut_info(freq_mx)
+            mi_mx = self.mut_info(np.copy(freq_mx))
             #self.cond_depend()
             #self.cocluster()#blockdiag=True)
             #self.dim_reduce()#apply_tsne=False)
@@ -76,30 +76,6 @@ class TadeClustering():
                                                               prev, stem, col]
         return mx
 
-    def cond_depend(self, probab_axis=2):
-        logging.info("Computing conditional dependency..")
-        shape = list(mx.shape)
-        shape[probab_axis] = -1
-        shape = tuple(shape)
-        mx += 1
-        mx /= mx.sum(axis=probab_axis).reshape(shape)
-        mx = mx.sum(axis=self.sum_axis) 
-
-    def mut_info(self, mx):
-        logging.info('Computing mutual information..')
-        mx += 1
-        n_token =  mx.sum()
-        row_sum = mx.sum(axis=1).reshape(-1,1)
-        col_sum = mx.sum(axis=0).reshape(1,-1)
-        logging.debug('Computing relative freq..')
-        mx /= row_sum
-        logging.debug('Computing relative freq..')
-        mx /= col_sum
-        mx *= n_token
-        if self.log_mx:
-            mx = np.log(mx)
-        return mx
-
     def sort_lines(self, mx, cut_off=(-1,-1)):
         logging.info("Sorting array..")
         row_argrank = mx.sum(axis=1).argsort()[::-1]
@@ -122,6 +98,29 @@ class TadeClustering():
         logging.debug(self.cols[:5])
         return mx
 
+    def mut_info(self, mx):
+        logging.info('Computing mutual information..')
+        mx += 1
+        n_token =  mx.sum()
+        row_sum = mx.sum(axis=1).reshape(-1,1)
+        col_sum = mx.sum(axis=0).reshape(1,-1)
+        logging.debug('Computing relative freq..')
+        mx /= row_sum
+        logging.debug('Computing relative freq..')
+        mx /= col_sum
+        mx *= n_token
+        if self.log_mx:
+            mx = np.log(mx)
+        return mx
+
+    def cond_depend(self, probab_axis=2):
+        logging.info("Computing conditional dependency..")
+        shape = list(mx.shape)
+        shape[probab_axis] = -1
+        shape = tuple(shape)
+        mx += 1
+        mx /= mx.sum(axis=probab_axis).reshape(shape)
+        mx = mx.sum(axis=self.sum_axis) 
 
     def cocluster(self, blockdiag=False):
         logging.info('Co-clustering Tade..')
@@ -170,7 +169,8 @@ class TadeClustering():
             if self.log_mx:
                 cax = self.ax.matshow(mi_mx)
             else:
-                cax = self.ax.matshow(freq_mx>2)#np.where(freq_mx>3, mi_mx, np.zeros(mi_mx.shape)))# norm=LogNorm())
+                cax = self.ax.matshow(np.where(freq_mx>2, mi_mx,
+                                               np.zeros(mi_mx.shape)), norm=LogNorm())
             label_limit = 100
             if mi_mx.shape[0] <= label_limit:
                 self.ax.set_yticklabels([''] + self.rows.tolist())
