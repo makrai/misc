@@ -24,6 +24,8 @@ class TadeClustering():
         self.input_filen = '/mnt/store/hlt/Language/Hungarian/Dic/tade/tade_cutoff_with-aux.tsv'
         self.short = short
         self.log_mx = log_mx
+        if sum_axis != 1:
+            raise NotImplementedError()
         self.sum_axis = sum_axis
 
     def main(self, print_cutoff=False, entropy_ax=True, type_freq=False):
@@ -38,14 +40,13 @@ class TadeClustering():
             tade_mx = self.sort_lines(tade_mx, cut_off=(50,-1,60))#400,1000))
             freq_mx = tade_mx.sum(axis=1)
             if entropy_ax:
-                stat_mx = np.apply_along_axis(entropy)
+                stat_mx = np.apply_along_axis(entropy, 1,tade_mx)
                 stat_mx = np.where(stat_mx>0,stat_mx,0)
             stat_mx = self.mut_info(stat_mx, smooth=0)
             #self.cond_depend()
-            #stat_mx = self.cocluster(stat_mx, blockdiag=True)
-            #self.dim_reduce()#apply_tsne=False)
-            self.plot_tade(stat_mx, cond=#stat_mx>.01 * 
-                           freq_mx>2)#, fig_filen='tade-prev-cas-token.pdf')
+            #stat_mx = self.cocluster(stat_mx)# blockdiag=True)
+            #stat_mx = self.dim_reduce(stat_mx, transpose=True)#apply_tsne=False)
+            self.plot_tade(stat_mx)#, #cond=#stat_mx>.01 * freq_mx>2)#, fig_filen='tade-prev-cas-token.pdf')
 
     def read_tade_dict(self, frame_count=False, collate_aux=True):
         logging.info("Reading Tade to a dictionary..")
@@ -161,7 +162,10 @@ class TadeClustering():
         self.case = self.case[np.argsort(clusser.column_labels_)]
         return mx
 
-    def dim_reduce(self, apply_tsne=True):
+    def dim_reduce(self, mx, apply_tsne=True, transpose=False):
+        if transpose:
+            mx = mx.T
+            self.rows, self.cols = self.cols, self.rows
         if mx.shape[1] > 400 or not apply_tsne:
             logging.info('PCA.. from {}'.format(mx.shape))
             pca = PCA(n_components=200 if apply_tsne else 2)
@@ -175,6 +179,7 @@ class TadeClustering():
         #   approximation running in O(NlogN) time. method='exact' will run on
         #   the slower, but exact, algorithm in O(N^2) time
         logging.debug(mx.shape)
+        return mx
 
     def plot_tade(self, stat_mx, cond=None, fig_filen=None, row_freq_ent=False):
         logging.info('Plotting..')
@@ -218,6 +223,7 @@ class TadeClustering():
 
     def scatter(self, xs, ys):
         self.ax.scatter(xs, ys)
+        return
         points, features = self.prev, self.case
         labels = np.array(['{} {}'.format(l, features[m]) for l, m in zip(
             points, mx.argmax(axis=1))])
