@@ -1,11 +1,11 @@
-# A konferencia előtti workshopok
+# Widening NLP workshop
 
-* Salle+ (Wildening NLP workshop) Incorporating subword information into matrix factorization word
+* Salle+  Incorporating sub-word information into matrix factorization word
 
-## Tutorial: Lexical Resources
+# Tutorial: Lexical Resources
 
 * definition modeling
-* dictionary example acquisitoin
+* dictionary example acquisition
 
 # Session 2
 
@@ -14,7 +14,7 @@
   * morphologically rich languages
   * fix norm (+lex)
 * Gu, Hassan, Devlin, & Li 39 
- * Universal Lexical representatin
+ * Universal Lexical representation
 * Gururangan, Swayamdippta, Levy, Schwartz, Bowman & Smith: Annot artifacts in
   inference data (photo)
 
@@ -42,8 +42,8 @@
 * Antoniak & Mimno: stability of embedding-based similarities
   * order of sentences in the corpus 
 * Jiang, Yu, Hsieh, & Chang: positive-unlabeled (PU) learning
-  * \rho: confidence treshold for true zero vs missing value
-* Nguyen, Nguyen, & Nguyen: novel embed for kb comp based on cnn (photo)
+  * \rho: confidence threshold for true zero vs missing value
+* Nguyen, Nguyen, & Nguyen: novel embed for KB comp based on CNN (photo)
 * Wang, Shen, & Jin: ...semantic frame... (photo)
 
 #  Session 7
@@ -60,7 +60,7 @@
 # Session 9
 
 * Cai and Wang: KBGAN: Adversarial Learning for Knowledge Graph Embeddings
-  * negative paris should be sensible
+  * negative pairs should be sensible
 
 # Session 10
 
@@ -75,16 +75,16 @@
 # Session 11
 
 * Beuchel & Hahn: Word emotion induction for multiple languages 
-  as a deep multi-task learnin problem
+  as a deep multi-task learning problem
   * valence (kellemes), arousel (calm--excite), dominance
   * bigger emo lexicon in LREC paper
   * new SOTA
 * Fernández-González and Gómez-Rodríguez: Non-proj dep pars w non-local tarns
   * new SOTA
 * Sanchez, Mitchell, & and Riedel: Anal of NLI models: ...
-  three fractors of robustness
-  * insensitivity, polarity, and inseen pairs
-  * e.g. sunset-sunrise <- polar paris => contradiction
+  three factors of robustness
+  * insensitivity, polarity, and unseen pairs
+  * e.g. sunset-sunrise <- polar pairs => contradiction
 * Wendlandt, Kummerfeld, and Mihalcea: Factors... instability of [embeddings]
   * ...
   * POS
@@ -119,7 +119,7 @@
   * some words' NNs are more stable, e.g. family, co-hyponyms
 * Tu Vu & V Shwartz: Integrating multiplicative features unto supervised distri
   methods of lex entail
-  * pointwise product moticated by cos sim
+  * point-wise product motivated by cos sim
 * Poliak, Naradowsky, Haldar, Rudinger and Van Durme: 
   Hypothesis only baselines (best paper)
   * jókedélyű előadó
@@ -137,7 +137,7 @@
 ## 7 Sem Rel Extract and Classif Scientific
 
 * Rotszejn, Hollenstein, Ce Zhang: relative position embedding
-* reverse resamble non-reverse
+* reverse resemble non-reverse
 
 ## 8 Hypernym
 
@@ -149,21 +149,21 @@
 
 # Generalization in Deep
 
-* Ndapa: word transslation
+* Ndapa: word translation
   * are words (Artetxe 18)
   * reduce supervision (Nakashole emnlp 17)
   * linear --> locally linear,
   * bib Connean+ 18
   * neighborhood: semantic field
-* Mitchell, Stenetorm, Minervini, & Riedel: Extrapol in NLP
+* Mitchell, Stenetorm, Minervini, & Riedel: Extrapolation in NLP
   * theoretical
     * symmetry
     * linearity
 
-# SCLeM: Subword and Char LEvel
+# SCLeM: Sub-word and Char Level
 
 * Neubig: Morphology, when is is useful for neural models?
   * transfer from Turkish & Hindi
-  * differend writing system, phonemes help
+  * different writing system, phonemes help
   * fi/hu, da/sv, ru/bg, es/pt
-* Salle & Villavicencio: subword info into mx factor embeds (photo)
+* Salle & Villavicencio: sub-word info into mx factor embeds (photo)
