@@ -14,7 +14,7 @@
   * morphologically rich languages
   * fix norm (+lex)
 * Gu, Hassan, Devlin, & Li 39 
- * Universal Lexical representation
+  * Universal Lexical representation
 * Gururangan, Swayamdippta, Levy, Schwartz, Bowman & Smith: Annot artifacts in
   inference data (photo)
 
@@ -79,7 +79,7 @@
   * valence (kellemes), arousel (calm--excite), dominance
   * bigger emo lexicon in LREC paper
   * new SOTA
-* Fernández-González and Gómez-Rodríguez: Non-proj dep pars w non-local tarns
+* Fernández-González and Gómez-Rodríguez: Non-proj dep pars w non-local trans
   * new SOTA
 * Sanchez, Mitchell, & and Riedel: Anal of NLI models: ...
   three factors of robustness
@@ -117,7 +117,7 @@
   * {PCFG optim & verb clust} simult
 * Pierrejean & Tanguy: Predicting word embeddings variability
   * some words' NNs are more stable, e.g. family, co-hyponyms
-* Tu Vu & V Shwartz: Integrating multiplicative features unto supervised distri
+* Tu Vu & V Shwartz: Integrating multiplicative features into supervised distri
   methods of lex entail
   * point-wise product motivated by cos sim
 * Poliak, Naradowsky, Haldar, Rudinger and Van Durme: 
@@ -143,14 +143,14 @@
 
 * Crim
   * discover co-hyponyms
-  * e.g.
+  * error anal
     * aquamarine: crystal, color
     * vegetarian: dish
 
 # Generalization in Deep
 
 * Ndapa: word translation
-  * are words (Artetxe 18)
+  * rare words (Artetxe 18)
   * reduce supervision (Nakashole emnlp 17)
   * linear --> locally linear,
   * bib Connean+ 18
