@@ -10,7 +10,7 @@
 # Session 2
 
 * T Nguyen & D Chiang: Lex Choice in NMT 
-  * bite per encoding 
+  * byte pair encoding 
   * morphologically rich languages
   * fix norm (+lex)
 * Gu, Hassan, Devlin, & Li 39 
