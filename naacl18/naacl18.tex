@@ -13,10 +13,8 @@
 \usecolortheme[named=hltblue]{structure}
 \setbeamercolor{alerted text}{fg=hltdarkgreen}
 
-%\usetheme{hlt}
-
 \author[Makrai Márton]{
-\includegraphics[width=.7\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180601_090658_tram.jpg} \\
+  \includegraphics[width=.7\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180601_090658_tram.jpg} \\
   Makrai Márton \\ 
   2018., függetlenség napja, Nytud}
 \date[2018., függetlenség napja]{}
@@ -25,21 +23,29 @@
 
 \maketitle
 
-\begin{frame}{(in)stability of embeddings + az új GloVe}
-\begin{columns}\begin{column}{.35\textwidth}\centering
-\includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180602_203523_jos.jpg}\end{column}\begin{column}{.65\textwidth}
-  \begin{itemize}
-    \item Wendlandt, Kummerfeld, and Mihalcea: 
-      Factors\dots  instability of [embeddings]
-    \item Antoniak \& Mimno: stability of embedding-based similarities
-    \item Pierrejean \& Tanguy: Predicting word embeddings variability 
-    \item Jiang, Yu, Hsieh, \& Chang: positive-unlabeled (PU) learning % TODO
-      \\ $\rho$: confidence threshold for true zero vs missing value 
-  \end{itemize}
-\end{column}\end{columns}
+\begin{frame}[allowframebreaks]{(in)stability of embeddings + az új GloVe}
+  \begin{columns}\begin{column}{.35\textwidth}\centering
+  \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180602_203523_jos.jpg}\end{column}\begin{column}{.65\textwidth}
+    \begin{itemize}
+      \item Wendlandt, Kummerfeld, and Mihalcea: 
+        Factors\dots  instability of [embeddings]
+      \item Antoniak \& Mimno: stability of embedding-based similarities
+      \item Pierrejean \& Tanguy: Predicting word embeddings variability 
+      \item Jiang, Yu, Hsieh, \& Chang: positive-unlabeled (PU) learning
+        \\ $\rho$: confidence threshold for true zero vs missing value 
+    \end{itemize}
+  \end{column}\end{columns}
+  \centering
+  \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/079-jiang.jpg}
 \end{frame}
 
-\begin{frame}{Meztelen az inferencia}
+  \begin{frame}[allowframebreaks]
+    \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/casino/IMG_20180601_212320.jpg}
+
+    \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/casino/IMG_20180601_212428.jpg}
+  \end{frame}
+
+\begin{frame}[allowframebreaks]{Meztelen az inferencia}
   \begin{itemize} 
     \item Gururangan, Swayamdippta, Levy, Schwartz, Bowman \& Smith: 
       Annot artifacts in inference data (photo)
@@ -52,9 +58,14 @@
       \\ jókedélyű előadó
       \\ sem proto-roles --> Reisinger, bib 
   \end{itemize}
+      \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/046-gurugangan.jpg}
 \end{frame}
 
-\begin{frame}{hypernymy and/or sparse word representation}
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180601_213002_mississ.jpg}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{hypernymy and/or sparse word representation}
   \begin{itemize}
     \item Chang, Wang, Vilnis, \& McCallum: Distributional inclusion \dots  embedding for
       unsup hypernymy detection
@@ -71,22 +82,41 @@
       \end{itemize}
     \item Mahabal, Roth, Mittal: Polysemy via Sparse
   \end{itemize}
+  \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/059-hs_chang/1-full.jpg}
+
+  \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/161-berend.jpg}
+\end{frame}
+
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_150509_sweet.jpg}
 \end{frame}
 
 \begin{frame}{translation 1: words}
-\begin{columns}\begin{column}{.35\textwidth}\centering \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180603_145438_wooden.jpg}\end{column}\begin{column}{.65\textwidth}
-  \begin{itemize} 
-    \item Ndapa: word translation
-      \\ rare words (Artetxe 18)
-      \\ reduce supervision (Nakashole emnlp 17)
-      \\ linear --> locally linear,
-      \\ bib Connean+ 18
-      \\ neighborhood: semantic field
-    \item Bakarov, Suvorov, Sochenkov: The Limitations of Cross-lang word embed eval 
-      \\ bib (photo)
-  \end{itemize}
-\end{column}\end{columns}
+  \begin{columns}
+    \begin{column}{.35\textwidth}
+      \centering 
+      \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180603_145438_wooden.jpg}
+    \end{column}
+    \begin{column}{.65\textwidth}
+      \begin{itemize} 
+        \item Ndapa: word translation
+          \\ rare words (Artetxe 18)
+          \\ reduce supervision (Nakashole emnlp 17)
+          \\ linear --> locally linear,
+          \\ bib Connean+ 18
+          \\ neighborhood: semantic field
+        \item Bakarov, Suvorov, Sochenkov: The Limitations of Cross-lang word embed eval 
+          \\ bib (photo)
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  %\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/166-bakarov}
 \end{frame}
+
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_201731_history.jpg}
+\end{frame}
+
 \begin{frame}{translation}
   \begin{itemize}
     \item Gu, Hassan, Devlin, \& Li: Univ NMT for extremely low resource 
@@ -104,42 +134,63 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{knowledge graphs}
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_204635_french.jpg}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{knowledge graphs}
   \begin{itemize}
     \item Tutorial: Lexical Resources 
       by Jose Camacho-Collados, Luis Espinosa Anke and Mohammad Taher Pilehvar 
                 \\ definition modeling
                 \\ dictionary example acquisition
-    \item Vulić, Glavaš, Mrkšić, \& Korhonen: 
-      Post-specialization: Retrofitting \dots  unseen in lex res
-    \item Cai and Wang: KBGAN: Adversarial Learning for Knowledge Graph Embeddings
-      \\ negative pairs should be sensible
-    \item Wenhu Chen, Xiong, Yan, and Wang: Variational Knowledge Graph Reasoning
-    \item Nguyen, Nguyen, \& Nguyen: novel embed for KB comp based on CNN (photo)
+              \item Vulić, Glavaš, Mrkšić, \& Korhonen: 
+                Post-specialization: Retrofitting \dots  unseen in lex res
+              \item Cai and Wang: KBGAN: Adversarial Learning for Knowledge Graph Embeddings
+                \\ negative pairs should be sensible
+              \item Wenhu Chen, Xiong, Yan, and Wang: Variational Knowledge Graph Reasoning
+              \item Nguyen, Nguyen, \& Nguyen: novel embed for KB comp based on CNN (photo)
   \end{itemize}
+  \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/096-vulic_thank/IMG_20180603_162140.jpg}
+
+  %\includegraphics[height=.9\textheight]{/home/makrai/Pictures/naacl18/083-nguyen_poster/1-nguyen-embed-kb-cnn.jpg}
+\end{frame}
+
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180603_131039_postcard.jpg}
 \end{frame}
 
 \begin{frame}{adversarial}
-\begin{columns}\begin{column}{.35\textwidth}\centering \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180606_151843_delicious.jpg}\end{column}\begin{column}{.65\textwidth}
-  \begin{itemize}
-    \item Li, Robin Jia, He, \& Liang: sentiment and style transfer\dots 
-      \\ AE
-      \\ adversarial setting: make the attribute indistinguishable from the
-      bottle-neck representation
-    \item Iyyer, Wieting, Gimpel, and Zettlemoyer:  
-      Adversarial Example Generation 
-      with Syntactically Controlled Paraphrase Networks
-  \end{itemize}
-\end{column}\end{columns}
+  \begin{columns}
+    \begin{column}{.35\textwidth}
+      \centering 
+      \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180606_151843_delicious.jpg}
+    \end{column}
+    \begin{column}{.65\textwidth}
+      \begin{itemize}
+        \item Li, Robin Jia, He, \& Liang: sentiment and style transfer\dots 
+          \\ AE
+          \\ adversarial setting: make the attribute indistinguishable from the
+          bottle-neck representation
+        \item Iyyer, Wieting, Gimpel, and Zettlemoyer:  
+          Adversarial Example Generation 
+          with Syntactically Controlled Paraphrase Networks
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-%* Beuchel \& Hahn: Word emotion induction for multiple languages 
-%  as a deep multi-task learning problem
-%  * valence (kellemes), arousel (calm--excite), dominance
-%  * bigger emo lexicon in LREC paper
-%  * new SOTA
+  \begin{frame}
+    \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180603_193801_social.jpg}
+  \end{frame}
 
-\begin{frame}{Outstanding papers}
+  %* Beuchel \& Hahn: Word emotion induction for multiple languages 
+  %  as a deep multi-task learning problem
+  %  * valence (kellemes), arousel (calm--excite), dominance
+  %  * bigger emo lexicon in LREC paper
+  %  * new SOTA
+
+\begin{frame}[allowframebreaks]{Outstanding papers}
   \begin{itemize} 
     \item Peters, Neumann, Iyyer, Gardner, Clark, Lee, Zettlemoyer
       \\ new SOTA in 6 tasks
@@ -147,83 +198,109 @@
     \item Clark, Ji, \& Smith: Neural text gen in stories using entity repr as context
       \\ Hobbs (1979)
     \item Chen, Gilroy, Maletti, May, \& Knight: RNN vs WFSA
-      \\ $P(\Sigma*) \stackrel{?}{=} 1$
-      \\ consistency, never-ending derivations
-      \\ decidable? no
-      \\ trained RNNs -- conjecture
-      \\ best path: Dijkstra vs Knuth vs no
-      \\ best string
-      \\ equivalence
-      \\ minimization
-      \\ class of RNN languages $\stackrel ?=$ LSTM
+      \begin{itemize}
+        \item $P(\Sigma^*) \stackrel{?}{=} 1$
+        \item consistency, never-ending derivations
+        \item decidable? no
+        \item trained RNNs -- conjecture
+        \item best path: Dijkstra vs Knuth vs no
+        \item best string
+        \item equivalence
+        \item minimization
+        \item class of RNN languages $\stackrel ?=$ LSTM
+      \end{itemize}
   \end{itemize}
+  \includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/074-knight.jpg}
 \end{frame}
 
-\begin{frame}{Szemantika: *SEM, SemEval, egyéb}
-  \begin{itemize}
-    \item Tu Vu \& V Shwartz: 
-      Integrating multiplicative features into supervised distri methods of lex entail 
+\begin{frame}
+  \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180604_073328_heritage.jpg}
+\end{frame}
+
+    \begin{frame}{Szemantika: *SEM, SemEval, egyéb}
+      \begin{itemize}
+        \item Tu Vu \& V Shwartz: 
+          Integrating multiplicative features into supervised distri methods of lex entail 
               \\ point-wise product motivated by cos sim
-    \item Allen, Choh Man Teng: Putting sem into sem roles 
-    \item Pavlick: Compositionality
-      \\ deep learning is bad at the ling level (compositionality)
-      \\ RepEval: general purpose
-      \\ \emph{Bush travels on Monday to Michigan to remark on (\# Japanese)
-      economy.}
-    \item {SemEval Task 7: Sem Rel Extract and Classif Scientific}
-    \item Damonta \& Cohen: Cross-lingual AMR parsing
-      \\ parszolt kinai mondatból angol AMR
-    \item Kallmeyer, QasemiZadeh, Jackie Chi Kit Cheung
-      \\ {PCFG optim \& verb clust} simult
-    \item Wang, Shen, \& Jin: \dots semantic frame\dots  (photo) 
-  \end{itemize} 
+            \item Allen, Choh Man Teng: Putting sem into sem roles 
+            \item Pavlick: Compositionality
+              \\ deep learning is bad at the ling level (compositionality)
+          \\ RepEval: general purpose
+          \\ \emph{Bush travels on Monday to Michigan to remark on (\# Japanese)
+          economy.}
+        \item {SemEval Task 7: Sem Rel Extract and Classif Scientific}
+        \item Damonta \& Cohen: Cross-lingual AMR parsing
+          \\ parszolt kinai mondatból angol AMR
+        \item Kallmeyer, QasemiZadeh, Jackie Chi Kit Cheung
+          \\ {PCFG optim \& verb clust} simult
+        \item Wang, Shen, \& Jin: \dots semantic frame\dots  (photo) 
+      \end{itemize} 
+      %\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/083-wang}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+\includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180606_125902_vontat.jpg} 
+
+      \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180605_150527_flush_fl.jpg}
+    \end{frame}
+
+    \begin{frame}{mondatok}
+      \begin{columns}\begin{column}{.35\textwidth}\centering \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180606_193312_practical.jpg}\end{column}\begin{column}{.65\textwidth}
+        \begin{itemize}
+          \item Shaw, Uszkoreit, \& Vaswani: \dots \alert{relative position} (photo)
+          \item Rotszejn, Hollenstein, Ce Zhang: relative position embedding
+            \\ reverse resemble non-reverse
+          \item Fernández-González and Gómez-Rodríguez: Non-proj dep pars w non-local trans 
+            \\ new SOTA
+        \end{itemize}
+    \end{column} \end{columns}
+    %\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/101-shaw}
+  \end{frame}
+
+  \begin{frame}[allowframebreaks]
+\includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180606_190145_practical.jpg} 
+
+    \includegraphics[width=\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180605_200133_local.jpg}
+  \end{frame}
+
+  %# Generalization in Deep
+  %
+  %* Mitchell, Stenetorm, Minervini, \& Riedel: Extrapolation in NLP
+  %* theoretical
+  %* symmetry
+  %* linearity
+  %\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/168-mitchell}
+
+  \begin{frame}[allowframebreaks]{SCLeM: Sub-word and Char Level}
+    \begin{columns}
+      \begin{column}{.35\textwidth}
+        \centering
+    \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/179-salle.jpg}
+      \end{column}
+      \begin{column}{.65\textwidth}
+        \begin{itemize} 
+          \item
+            Alexandre Salle and Aline Villavicencio: 
+            sub-word information into matrix factorization word emebeds
+          \item Neubig: Morphology, when is is useful for neural models?
+            \\ transfer from Turkish \& Hindi
+            \\ different writing system, phonemes help
+            \\ fi/hu, da/sv, ru/bg, es/pt
+        \end{itemize}
+      \end{column} 
+    \end{columns}
+  \end{frame}
+
+\begin{frame}
+\includegraphics[width=.3\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_202310_migrant.jpg} 
+\hskip .5cm
+\includegraphics[width=.3\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180603_075835_1_cement.jpg}
+\hskip .5cm
+\includegraphics[width=.3\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180609_164528_cumulus.jpg}
 \end{frame}
 
-\begin{frame}{mondatok}
-\begin{columns}\begin{column}{.35\textwidth}\centering \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180606_193312_practical.jpg}\end{column}\begin{column}{.65\textwidth}
-    \begin{itemize}
-      \item Shaw, Uszkoreit, \& Vaswani: \dots \alert{relative position} (photo)
-      \item Rotszejn, Hollenstein, Ce Zhang: relative position embedding
-        \\ reverse resemble non-reverse
-      \item Fernández-González and Gómez-Rodríguez: Non-proj dep pars w non-local trans 
-        \\ new SOTA
-    \end{itemize}
-\end{column} \end{columns}
-\end{frame}
+\end{document} 
 
-%# Generalization in Deep
-%
-%* Mitchell, Stenetorm, Minervini, \& Riedel: Extrapolation in NLP
-%* theoretical
-%* symmetry
-%* linearity
-
-\begin{frame}{SCLeM: Sub-word and Char Level}
-\begin{columns}\begin{column}{.35\textwidth}\centering \includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180609_164528_cumulus.jpg}\end{column}\begin{column}{.65\textwidth}
-  \begin{itemize} 
-    \item % (photo)
-      Alexandre Salle and Aline Villavicencio: 
-      sub-word information into matrix factorization word emebeds
-    \item Neubig: Morphology, when is is useful for neural models?
-      \\ transfer from Turkish \& Hindi
-      \\ different writing system, phonemes help
-      \\ fi/hu, da/sv, ru/bg, es/pt
-  \end{itemize}
-\end{column} \end{columns}
+%\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/054-rooshenas} 
+%\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/079-rios-lex-substitution.jpg} 
 \end{frame} 
-\end{document}
-  \begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/casino/IMG_20180601_212320.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/casino/IMG_20180601_212428.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180601_213002_mississ.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_150509_sweet.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_201731_history.jpg}\end{frame}
-\begin{columns}\begin{column}{.35\textwidth}\includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180602_202310_migrant.jpg}\end{column}\begin{column}{.65\textwidth}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180602_204635_french.jpg}\end{frame}
-\begin{columns}\begin{column}{.35\textwidth}\includegraphics[height=.85\textheight]{/home/makrai/Pictures/naacl18/IMG_20180603_075835_1_cement.jpg}\end{column}\begin{column}{.65\textwidth}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180603_131039_postcard.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180603_193801_social.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180604_073328_heritage.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180605_150527_flush_fl.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180605_200133_local.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180606_125902_vontat.jpg}\end{frame}
-\begin{frame}\includegraphics[width=.9\textwidth]{/home/makrai/Pictures/naacl18/IMG_20180606_190145_practical.jpg}\end{frame}
