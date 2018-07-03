@@ -13,7 +13,7 @@
   * byte pair encoding 
   * morphologically rich languages
   * fix norm (+lex)
-* Gu, Hassan, Devlin, & Li 39 
+* Gu, Hassan, Devlin, & Li: Univ NMT for extremely low resource 
   * Universal Lexical representation
 * Gururangan, Swayamdippta, Levy, Schwartz, Bowman & Smith: Annot artifacts in
   inference data (photo)
