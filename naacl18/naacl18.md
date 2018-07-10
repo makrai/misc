@@ -162,7 +162,7 @@
 
 # SCLeM: Sub-word and Char Level
 
-* Neubig: Morphology, when is is useful for neural models?
+* Neubig: Morphology, when is it useful for neural models?
   * transfer from Turkish & Hindi
   * different writing system, phonemes help
   * fi/hu, da/sv, ru/bg, es/pt
