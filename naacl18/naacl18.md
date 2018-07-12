@@ -162,8 +162,10 @@
 
 # SCLeM: Sub-word and Char Level
 
-* Neubig: Morphology, when is it useful for neural models?
-  * transfer from Turkish & Hindi
+* Neubig: Morphology, when is it useful for neural models? (invited talk)
+  * transfer from Turkish & Hindi -- ehhez nem találom a cikket
   * different writing system, phonemes help
-  * fi/hu, da/sv, ru/bg, es/pt
+  * Neural Factor Graph Models for Cross-lingual Morphological Tagging
+    [(Malaviya+ ACL 18)](https://arxiv.org/abs/1805.04570)
+    * fi/hu, da/sv, ru/bg, es/pt
 * Salle & Villavicencio: sub-word info into mx factor embeds (photo)
