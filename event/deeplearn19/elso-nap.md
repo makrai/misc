@@ -7,11 +7,8 @@ kiszorítja. A DeepLearn szokásaihoz híven öt napon át 5-5 idősávban
 össze.
 
 Az első hármasból nem volt nehéz választanom, mert az egyiket maga Mikolov
-fémjelezte. Egy régi kollégától azt hallottam, hogy kicsit autista, a
-monitornak motyogja az előadást. Kicsit még attól is féltem, hogy lemondja a
-jelenést, mint Socher talán ugyancsak az egyik DeepLearn egy keynote-ját,
-mindenesetre nagy izgalommal vártam -- ahhoz hasonlóval, mint a pápát
-Csíksomlyón (mármint tényleg, vonalas katolikus vagyok).
+fémjelezte.  Nagy izgalommal vártam -- ahhoz hasonlóval, mint a pápát
+Csíksomlyón (mármint tényleg, pápista vagyok).
 
 Mikolov előadása megerősítette, talán egyenesen visszaadta a hagyományos gépi
 tanulásba vetett hitemet, ugyanis Tomáš végig az egyszerű, hatékony
@@ -57,7 +54,7 @@ kicsit lányos. Egy régi kollégának az volt róla a tapasztalata, hogy elég
 autistán ad elő: a laptopjába motyog. Nekem nem volt bajom az előadói
 stílusával. Bár amikor a szünetben is odamentek hozzá kérdezni, akkor látszott,
 hogy nagyon nehéz neki ez a helyzet, a padlót nézve hallgatta a kérdezőket,
-mint aki gyóntat.
+mint aki gyóntat. Mindenesetre izgalommal várom a folytatást.
 
 A második idősávjukban Piotr Bojanowski beszélt a fastText szó alatti
 modelljeiről. Ha jól értem, a lengyel példa egy 'leananászoz' (mármint
