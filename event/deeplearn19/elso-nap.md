@@ -45,9 +45,8 @@ A szóvektorokról szóló részben, jól nevelt öreg profhoz méltó módon el
 skip-gram hasonló eredményt ér el, mint a folytonos szózsák (cbow), és
 gyorsabban teszi. Az pontos implementáció körüli kontraverzióra, sőt egyáltalán
 a két architektúra közötti különbségre hasonlóan tekint, mint a korábban
-említett hiperparaméterekre: ki kell próbálni a különféle lehetőségeket.
-ő szemében ezek is esetleges implementáció. Ezzel szemben a korpusz
-megválasztására hívta fel a figyelmet.
+említett hiperparaméterekre: ki kell próbálni a különféle lehetőségeket.  Ezzel
+szemben a korpusz megválasztására hívta fel a figyelmet.
 
 A Mester külsőre is nagyon más volt, mint amire számítottam: kis termetű,
 kicsit lányos. Egy régi kollégának az volt róla a tapasztalata, hogy elég
