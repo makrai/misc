@@ -96,8 +96,17 @@ amik a dobókocka szerinti módon voltak elhelyezve, a kísérleti személy X-al
 dologként írta le, és a képen látszott is, hogy az elmében X alakban össze
 vannak kötve a pöttyök. Ennek az előadásnak a második régészetről eljöttem,
 mert nagyon fáradt voltam, kicsit rosszul is voltam, és a szállásra kellett
-jönnöm balhézni, de sajnálom, mert olyasmiket ígért, hogy a dekódolás GATE-val
-való javítása, a hallás dekódolása, és a nyelvi terület.
+jönnöm balhézni, de sajnálom, mert olyasmiket ígért, hogy a dekódolás GAN-nal
+való javítása (1.p68), a hallás dekódolása (1.p73, Kell+ Neuron 2018), és a
+nyelvi terület (a szemantikai tér leképezése, 1.p67).
+
+A harmadik órán olyan modellt mutatott, ami az agyról szóló cikkekben szereplő
+szavakat, pl. _olvasás_, kapcsolta össze a cikkhez publikált agyi képalkotásból
+jövő adatokkal.  Simításként a szavakat egy előtanított embeddingben való
+szomszédaival interpolálták.  Elég komoly gépitanulási/numerikus modelleket
+használt, pl.  ICA-t.  Végül felhívta a figyelmet az agyi architektúra és a
+mély ideghálók közötti néhány különbségre: az agyban csak 6-7 réteg van, inkább
+elosztott mint réteges, és hosszútávú feedback van.
 
 
 # Aaron Courville: generatív modellek
@@ -107,3 +116,10 @@ nélkül is adott intuíciót olyasmikről, mint  az autoregresszív CNN-t (Van 
 Oord 16), és a hanghullám hierarchikus szerkezete és a WaveNet tágított
 (dilated) konvolúciója közötti összefüggés vagy az eloszlások közelítésén
 alapuló módszerek.
+
+
+# Keynote: [Maria-Florina Balcan (Carnegie Mellon) Inkrementális
+klaszterezés](http://papers.nips.cc/paper/8263-data-driven-clustering-via-parameterized-lloyds-families)
+
+Három este keynote volt, ezek közül csak az elsőre mentem be. Keynote-nak nem
+neveztem volna, inkább egy jó egyetemi órának a klaszterezésről. 
