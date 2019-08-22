@@ -19,12 +19,13 @@ Application to text
 
 # James Kwok (Hong Kong Uni) Compressing Neural Networks
 
-network sparsification
-quantization
-low-rank approximation
-distillation
-more compact model
-neural architecture search
+Az előadó nagyon gyorsan (mint egy gyorsított felvétel) de nagyon érthetően
+(nemcsak kínai mércén) beszél. Még a kötelező bevezető szlájdok sem hatottak
+unalmasnak az előadásában.  A fő fejezetek ezek: 
+Hálózatok ritkítása metszéssel (pruning)  és ritkasági regularizálókkal,
+Hálózatok kvantálása kevesebb bittel, Alacsony rangú közelítés, 
+Lepárlás (distillation) és további kompakt modellek, és 
+A neurális architectúra keresése.  
 
 
 # Vasant Honavar (Pennsylvania S Uni) Causal Models for Making Sense of Data
