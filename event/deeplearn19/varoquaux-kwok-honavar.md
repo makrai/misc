@@ -56,5 +56,9 @@ A neurális architectúra keresése.
 
 ##Knowledge Distillation
 
+Transfer knowledge from a cumbersome (teacher) model to a small distilled model
+that is more suitable for deployment (Hinton et al, 2015). Match the
+predicted probabilities of classes, including the incorrect ones.
+
 
 # Vasant Honavar (Pennsylvania S Uni) Causal Models for Making Sense of Data
